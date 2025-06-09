@@ -1,9 +1,8 @@
-
 import { useState } from "react";
+import { motion } from "framer-motion";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Eye, FileText, Palette, User, GraduationCap, Briefcase } from "lucide-react";
+import { FileText, Sparkles, GraduationCap, Palette, Minimize2, Zap } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface Template {
@@ -12,7 +11,7 @@ interface Template {
   description: string;
   category: string;
   icon: React.ComponentType<any>;
-  preview: string;
+  gradient: string;
   code: string;
 }
 
@@ -26,10 +25,9 @@ const templates: Template[] = [
   {
     id: "professional",
     name: "Professional",
-    description: "Clean and modern design perfect for corporate environments",
-    category: "Business",
-    icon: Briefcase,
-    preview: "A sleek layout with clear sections for experience, skills, and achievements",
+    description: "Clean and modern design perfect for corporate positions",
+    icon: FileText,
+    gradient: "from-cyan-500 to-blue-600",
     code: `\\documentclass[11pt,a4paper]{article}
 \\usepackage[utf8]{inputenc}
 \\usepackage[margin=1in]{geometry}
@@ -93,10 +91,9 @@ Dynamic and results-oriented software engineer with 8+ years of experience in fu
   {
     id: "academic",
     name: "Academic",
-    description: "Formal layout ideal for research positions and academia",
-    category: "Education",
+    description: "Scholarly format ideal for research and academic positions",
     icon: GraduationCap,
-    preview: "Traditional academic format with emphasis on publications and research",
+    gradient: "from-purple-500 to-indigo-600",
     code: `\\documentclass[11pt,a4paper]{article}
 \\usepackage[utf8]{inputenc}
 \\usepackage[margin=1in]{geometry}
@@ -168,10 +165,9 @@ Role: Teaching Assistant | Enrollment: 350 students
   {
     id: "creative",
     name: "Creative",
-    description: "Artistic and unique design for creative professionals",
-    category: "Design",
+    description: "Bold and artistic layout for creative professionals",
     icon: Palette,
-    preview: "Bold typography and creative sections for portfolios and artistic work",
+    gradient: "from-pink-500 to-orange-600",
     code: `\\documentclass[11pt,a4paper]{article}
 \\usepackage[utf8]{inputenc}
 \\usepackage[margin=0.8in]{geometry}
@@ -253,10 +249,9 @@ Passionate creative professional specializing in brand identity and visual story
   {
     id: "minimal",
     name: "Minimal",
-    description: "Clean and simple design focusing on content over decoration",
-    category: "Simple",
-    icon: User,
-    preview: "Elegant minimalist approach with plenty of white space and clear typography",
+    description: "Simple and elegant design focusing on content",
+    icon: Minimize2,
+    gradient: "from-emerald-500 to-teal-600",
     code: `\\documentclass[11pt,a4paper]{article}
 \\usepackage[utf8]{inputenc}
 \\usepackage[margin=1.2in]{geometry}
@@ -348,115 +343,130 @@ Relevant Coursework: Data Structures, Algorithms, Database Systems, Software Eng
   }
 ];
 
-const TemplateSelector = ({ selectedTemplate, onTemplateSelect, onTemplateLoad }: TemplateSelectorProps) => {
-  const [previewTemplate, setPreviewTemplate] = useState<string | null>(null);
+const TemplateSelector = ({
+  selectedTemplate,
+  onTemplateSelect,
+  onTemplateLoad,
+}: TemplateSelectorProps) => {
+  const [hoveredTemplate, setHoveredTemplate] = useState<string | null>(null);
   const { toast } = useToast();
 
-  const handleUseTemplate = (template: Template) => {
+  const handleTemplateSelect = (template: any) => {
     onTemplateSelect(template.id);
     onTemplateLoad(template.code);
     toast({
-      title: "Template Loaded",
-      description: `${template.name} template has been loaded into the editor.`,
+      title: "Template Selected",
+      description: `${template.name} template loaded successfully!`,
     });
-  };
-
-  const getCategoryColor = (category: string) => {
-    const colors = {
-      Business: "bg-blue-500/10 text-blue-700",
-      Education: "bg-green-500/10 text-green-700",
-      Design: "bg-purple-500/10 text-purple-700",
-      Simple: "bg-gray-500/10 text-gray-700",
-    };
-    return colors[category as keyof typeof colors] || "bg-gray-500/10 text-gray-700";
   };
 
   return (
     <div className="space-y-6">
-      <div className="text-center">
-        <h2 className="text-3xl font-bold mb-4">Choose Your Template</h2>
-        <p className="text-muted-foreground max-w-2xl mx-auto">
-          Select a professionally designed LaTeX template with pre-filled content. 
-          Each template includes realistic data that you can customize to match your profile.
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="text-center"
+      >
+        <h2 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent mb-4">
+          Cosmic Portfolio Templates
+        </h2>
+        <p className="text-slate-300 max-w-2xl mx-auto">
+          Choose from our collection of stellar templates, each crafted for different dimensions of professional excellence
         </p>
-      </div>
+      </motion.div>
 
       <div className="grid md:grid-cols-2 gap-6">
-        {templates.map((template) => {
-          const Icon = template.icon;
-          
-          return (
-            <Card 
-              key={template.id} 
-              className={`group cursor-pointer transition-all duration-300 hover:shadow-lg hover:-translate-y-1 ${
-                selectedTemplate === template.id ? 'ring-2 ring-primary border-primary' : ''
-              }`}
-            >
-              <CardHeader>
+        {templates.map((template, index) => (
+          <motion.div
+            key={template.id}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: index * 0.1 }}
+            onHoverStart={() => setHoveredTemplate(template.id)}
+            onHoverEnd={() => setHoveredTemplate(null)}
+            whileHover={{ y: -10 }}
+            className="relative"
+          >
+            <Card className={`group cursor-pointer h-full bg-slate-900/40 backdrop-blur-sm border transition-all duration-500 overflow-hidden ${
+              selectedTemplate === template.id 
+                ? 'border-cyan-400/70 shadow-lg shadow-cyan-400/20' 
+                : 'border-slate-700/50 hover:border-purple-400/50'
+            }`}>
+              <motion.div
+                className={`absolute inset-0 bg-gradient-to-br ${template.gradient} opacity-0 transition-opacity duration-500 ${
+                  hoveredTemplate === template.id ? 'opacity-10' : ''
+                }`}
+              />
+              
+              <CardHeader className="relative z-10">
                 <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                      <Icon className="w-6 h-6 text-primary" />
-                    </div>
-                    <div>
-                      <CardTitle className="flex items-center gap-2">
-                        {template.name}
-                        {selectedTemplate === template.id && (
-                          <Badge variant="default" className="text-xs">Selected</Badge>
-                        )}
-                      </CardTitle>
-                      <Badge variant="secondary" className={`text-xs mt-1 ${getCategoryColor(template.category)}`}>
-                        {template.category}
-                      </Badge>
-                    </div>
-                  </div>
+                  <motion.div
+                    className={`w-12 h-12 bg-gradient-to-br ${template.gradient} rounded-xl flex items-center justify-center mb-4`}
+                    whileHover={{ rotate: 360 }}
+                    transition={{ duration: 0.8 }}
+                  >
+                    <template.icon className="w-6 h-6 text-white" />
+                  </motion.div>
+                  
+                  {selectedTemplate === template.id && (
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      className="w-6 h-6 bg-cyan-400 rounded-full flex items-center justify-center"
+                    >
+                      <Zap className="w-3 h-3 text-slate-900" />
+                    </motion.div>
+                  )}
                 </div>
                 
-                <CardDescription className="mt-3">
+                <CardTitle className="text-xl text-slate-100 mb-2">
+                  {template.name}
+                </CardTitle>
+                <CardDescription className="text-slate-300 leading-relaxed">
                   {template.description}
                 </CardDescription>
               </CardHeader>
               
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="p-3 bg-muted/50 rounded-lg">
-                    <p className="text-sm text-muted-foreground">{template.preview}</p>
+              <CardContent className="relative z-10">
+                {/* Template Preview */}
+                <div className="bg-slate-800/50 rounded-lg p-4 mb-4 min-h-[120px] flex items-center justify-center border border-slate-700/30">
+                  <div className="text-center">
+                    <motion.div
+                      animate={{ 
+                        scale: hoveredTemplate === template.id ? [1, 1.1, 1] : 1,
+                        rotate: hoveredTemplate === template.id ? [0, 5, -5, 0] : 0
+                      }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                      className={`w-16 h-20 bg-gradient-to-b ${template.gradient} rounded shadow-lg mx-auto mb-2 opacity-70`}
+                    />
+                    <p className="text-xs text-slate-400">Preview</p>
                   </div>
-                  
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setPreviewTemplate(previewTemplate === template.id ? null : template.id)}
-                      className="flex items-center gap-2"
-                    >
-                      <Eye className="w-4 h-4" />
-                      {previewTemplate === template.id ? "Hide Code" : "Preview Code"}
-                    </Button>
-                    
-                    <Button
-                      size="sm"
-                      onClick={() => handleUseTemplate(template)}
-                      className="flex items-center gap-2"
-                    >
-                      <FileText className="w-4 h-4" />
-                      Use Template
-                    </Button>
-                  </div>
-                  
-                  {previewTemplate === template.id && (
-                    <div className="mt-4 p-4 bg-muted/30 rounded-lg">
-                      <h4 className="font-semibold text-sm mb-2">LaTeX Code Preview:</h4>
-                      <pre className="text-xs overflow-x-auto max-h-40 overflow-y-auto latex-editor bg-background p-3 rounded border">
-                        {template.code.substring(0, 500)}...
-                      </pre>
-                    </div>
-                  )}
                 </div>
+                
+                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                  <Button
+                    onClick={() => handleTemplateSelect(template)}
+                    className={`w-full transition-all duration-300 ${
+                      selectedTemplate === template.id
+                        ? 'bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-400 hover:to-purple-400 text-white'
+                        : 'bg-slate-800/50 hover:bg-slate-700/50 text-slate-300 border border-slate-600/50'
+                    }`}
+                    variant={selectedTemplate === template.id ? "default" : "outline"}
+                  >
+                    {selectedTemplate === template.id ? (
+                      <>
+                        <Sparkles className="w-4 h-4 mr-2" />
+                        Selected
+                      </>
+                    ) : (
+                      'Select Template'
+                    )}
+                  </Button>
+                </motion.div>
               </CardContent>
             </Card>
-          );
-        })}
+          </motion.div>
+        ))}
       </div>
     </div>
   );
