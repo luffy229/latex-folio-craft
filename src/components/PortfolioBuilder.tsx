@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,10 +13,70 @@ interface PortfolioBuilderProps {
   onBack: () => void;
 }
 
+const defaultLatexCode = `\\documentclass[11pt,a4paper]{article}
+\\usepackage[utf8]{inputenc}
+\\usepackage[margin=1in]{geometry}
+\\usepackage{enumitem}
+\\usepackage{titlesec}
+\\usepackage{xcolor}
+
+\\definecolor{primarycolor}{RGB}{46, 125, 50}
+\\titleformat{\\section}{\\large\\bfseries\\color{primarycolor}}{}{0em}{}[\\textcolor{primarycolor}{\\titlerule}]
+\\titleformat{\\subsection}{\\bfseries}{}{0em}{}
+
+\\begin{document}
+
+\\begin{center}
+{\\LARGE \\textbf{John Smith}}\\\\
+\\vspace{5pt}
+{\\large Senior Software Engineer}\\\\
+\\vspace{5pt}
+Email: john.smith@email.com | Phone: (555) 123-4567\\\\
+LinkedIn: linkedin.com/in/johnsmith | GitHub: github.com/johnsmith
+\\end{center}
+
+\\section{Professional Summary}
+Dynamic and results-oriented software engineer with 8+ years of experience in full-stack development. Proven track record of delivering scalable solutions and leading cross-functional teams to achieve project goals.
+
+\\section{Experience}
+\\subsection{Senior Software Engineer | TechCorp Inc. | 2020 - Present}
+\\begin{itemize}[leftmargin=20pt]
+\\item Led development of microservices architecture serving 1M+ daily users
+\\item Implemented CI/CD pipelines reducing deployment time by 60\\%
+\\item Mentored 5 junior developers and conducted technical interviews
+\\item Technologies: React, Node.js, AWS, Docker, Kubernetes
+\\end{itemize}
+
+\\subsection{Software Engineer | StartupXYZ | 2018 - 2020}
+\\begin{itemize}[leftmargin=20pt]
+\\item Developed and maintained RESTful APIs using Python and Django
+\\item Collaborated with product team to deliver features for 50K+ users
+\\item Optimized database queries improving response time by 40\\%
+\\item Technologies: Python, Django, PostgreSQL, Redis
+\\end{itemize}
+
+\\section{Education}
+\\textbf{Master of Science in Computer Science} | Stanford University | 2018\\\\
+\\textbf{Bachelor of Science in Software Engineering} | UC Berkeley | 2016
+
+\\section{Technical Skills}
+\\textbf{Languages:} JavaScript, Python, Java, TypeScript, Go\\\\
+\\textbf{Frameworks:} React, Node.js, Django, Spring Boot, Express\\\\
+\\textbf{Tools:} AWS, Docker, Kubernetes, Git, Jenkins, MongoDB
+
+\\section{Key Achievements}
+\\begin{itemize}[leftmargin=20pt]
+\\item Led team that delivered project 2 weeks ahead of schedule
+\\item Reduced system downtime by 95\\% through monitoring implementation
+\\item AWS Certified Solutions Architect - Professional (2022)
+\\end{itemize}
+
+\\end{document}`;
+
 const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedTemplate, setSelectedTemplate] = useState("professional");
-  const [latexCode, setLatexCode] = useState("");
+  const [latexCode, setLatexCode] = useState(defaultLatexCode);
   const [isCompiling, setIsCompiling] = useState(false);
   const [pdfUrl, setPdfUrl] = useState("");
   const { toast } = useToast();
@@ -26,6 +85,8 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
     // Simulate initial loading
     const timer = setTimeout(() => {
       setIsLoading(false);
+      // Auto-compile the default template on load
+      handleCompile();
     }, 2000);
 
     return () => clearTimeout(timer);
