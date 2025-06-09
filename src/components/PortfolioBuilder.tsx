@@ -1,13 +1,16 @@
+
 import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, Download, Eye, FileText, Zap } from "lucide-react";
+import { ArrowLeft, Download, Eye, FileText, Zap, Rocket } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import LaTeXEditor from "./LaTeXEditor";
 import PDFPreview from "./PDFPreview";
 import TemplateSelector from "./TemplateSelector";
 import LoadingSkeleton from "./LoadingSkeleton";
+import SpaceBackground from "./SpaceBackground";
 
 interface PortfolioBuilderProps {
   onBack: () => void;
@@ -142,123 +145,177 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen relative">
+      <SpaceBackground />
+      
       {/* Header */}
-      <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
+      <motion.div
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.6 }}
+        className="relative z-10 border-b border-slate-700/50 bg-slate-900/80 backdrop-blur-xl sticky top-0"
+      >
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={onBack}
-                className="flex items-center gap-2"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                Back to Home
-              </Button>
-              <div className="h-6 w-px bg-border" />
-              <h1 className="text-xl font-bold">LaTeX Portfolio Builder</h1>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={onBack}
+                  className="flex items-center gap-2 text-cyan-300 hover:text-cyan-200 hover:bg-cyan-500/10"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  Back to Cosmos
+                </Button>
+              </motion.div>
+              <div className="h-6 w-px bg-slate-600" />
+              <h1 className="text-xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+                Cosmic Portfolio Builder
+              </h1>
             </div>
             
             <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleCompile}
-                disabled={isCompiling}
-                className="flex items-center gap-2"
-              >
-                <Zap className="w-4 h-4" />
-                {isCompiling ? "Compiling..." : "Compile"}
-              </Button>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleCompile}
+                  disabled={isCompiling}
+                  className="flex items-center gap-2 border-cyan-500/50 text-cyan-300 hover:bg-cyan-500/10"
+                >
+                  <Zap className="w-4 h-4" />
+                  {isCompiling ? "Compiling..." : "Compile"}
+                </Button>
+              </motion.div>
               
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleDownloadTeX}
-                className="flex items-center gap-2"
-              >
-                <FileText className="w-4 h-4" />
-                Download .tex
-              </Button>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleDownloadTeX}
+                  className="flex items-center gap-2 border-purple-500/50 text-purple-300 hover:bg-purple-500/10"
+                >
+                  <FileText className="w-4 h-4" />
+                  Download .tex
+                </Button>
+              </motion.div>
               
-              <Button
-                size="sm"
-                onClick={handleDownloadPDF}
-                className="flex items-center gap-2"
-              >
-                <Download className="w-4 h-4" />
-                Download PDF
-              </Button>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Button
+                  size="sm"
+                  onClick={handleDownloadPDF}
+                  className="flex items-center gap-2 bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-400 hover:to-purple-400 text-white"
+                >
+                  <Download className="w-4 h-4" />
+                  Download PDF
+                </Button>
+              </motion.div>
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 py-6">
-        <Tabs defaultValue="editor" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="templates">Templates</TabsTrigger>
-            <TabsTrigger value="editor">Editor</TabsTrigger>
-            <TabsTrigger value="preview">Preview</TabsTrigger>
-          </TabsList>
+      <div className="relative z-10 container mx-auto px-4 py-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
+          <Tabs defaultValue="editor" className="space-y-6">
+            <TabsList className="grid w-full grid-cols-3 bg-slate-900/50 backdrop-blur-sm border border-slate-700/50">
+              <TabsTrigger value="templates" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500/20 data-[state=active]:to-purple-500/20">
+                Templates
+              </TabsTrigger>
+              <TabsTrigger value="editor" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500/20 data-[state=active]:to-purple-500/20">
+                Editor
+              </TabsTrigger>
+              <TabsTrigger value="preview" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500/20 data-[state=active]:to-purple-500/20">
+                Preview
+              </TabsTrigger>
+            </TabsList>
 
-          <TabsContent value="templates">
-            <TemplateSelector
-              selectedTemplate={selectedTemplate}
-              onTemplateSelect={setSelectedTemplate}
-              onTemplateLoad={setLatexCode}
-            />
-          </TabsContent>
-
-          <TabsContent value="editor">
-            <div className="grid lg:grid-cols-2 gap-6 h-[80vh]">
-              <Card className="flex flex-col">
-                <CardHeader>
-                  <CardTitle>LaTeX Editor</CardTitle>
-                </CardHeader>
-                <CardContent className="flex-1">
-                  <LaTeXEditor
-                    code={latexCode}
-                    onChange={setLatexCode}
+            <AnimatePresence mode="wait">
+              <TabsContent value="templates">
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <TemplateSelector
+                    selectedTemplate={selectedTemplate}
+                    onTemplateSelect={setSelectedTemplate}
+                    onTemplateLoad={setLatexCode}
                   />
-                </CardContent>
-              </Card>
+                </motion.div>
+              </TabsContent>
 
-              <Card className="flex flex-col">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Eye className="w-5 h-5" />
-                    Live Preview
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="flex-1">
-                  <PDFPreview
-                    pdfUrl={pdfUrl}
-                    isCompiling={isCompiling}
-                  />
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
+              <TabsContent value="editor">
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  transition={{ duration: 0.3 }}
+                  className="grid lg:grid-cols-2 gap-6 h-[80vh]"
+                >
+                  <Card className="flex flex-col bg-slate-900/40 backdrop-blur-sm border border-slate-700/50">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2 text-cyan-300">
+                        <Rocket className="w-5 h-5" />
+                        LaTeX Editor
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex-1">
+                      <LaTeXEditor
+                        code={latexCode}
+                        onChange={setLatexCode}
+                      />
+                    </CardContent>
+                  </Card>
 
-          <TabsContent value="preview">
-            <Card>
-              <CardHeader>
-                <CardTitle>Portfolio Preview</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <PDFPreview
-                  pdfUrl={pdfUrl}
-                  isCompiling={isCompiling}
-                  fullscreen
-                />
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+                  <Card className="flex flex-col bg-slate-900/40 backdrop-blur-sm border border-slate-700/50">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2 text-purple-300">
+                        <Eye className="w-5 h-5" />
+                        Live Preview
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex-1">
+                      <PDFPreview
+                        pdfUrl={pdfUrl}
+                        isCompiling={isCompiling}
+                      />
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              </TabsContent>
+
+              <TabsContent value="preview">
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <Card className="bg-slate-900/40 backdrop-blur-sm border border-slate-700/50">
+                    <CardHeader>
+                      <CardTitle className="text-cyan-300">Portfolio Preview</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <PDFPreview
+                        pdfUrl={pdfUrl}
+                        isCompiling={isCompiling}
+                        fullscreen
+                      />
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              </TabsContent>
+            </AnimatePresence>
+          </Tabs>
+        </motion.div>
       </div>
     </div>
   );
