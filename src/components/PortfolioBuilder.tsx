@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -167,34 +168,35 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
     <div className="min-h-screen relative">
       <SpaceBackground />
       
-      {/* Header */}
+      {/* Header - Fully Responsive */}
       <motion.div
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.6 }}
         className="relative z-10 border-b border-slate-700/50 bg-slate-900/80 backdrop-blur-xl sticky top-0"
       >
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+        <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
+            <div className="flex items-center gap-2 sm:gap-4 w-full sm:w-auto">
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={onBack}
-                  className="flex items-center gap-2 text-cyan-300 hover:text-cyan-200 hover:bg-cyan-500/10"
+                  className="flex items-center gap-1 sm:gap-2 text-cyan-300 hover:text-cyan-200 hover:bg-cyan-500/10 text-xs sm:text-sm"
                 >
-                  <ArrowLeft className="w-4 h-4" />
-                  Back to Cosmos
+                  <ArrowLeft className="w-3 h-3 sm:w-4 sm:h-4" />
+                  <span className="hidden xs:inline">Back to</span> Cosmos
                 </Button>
               </motion.div>
-              <div className="h-6 w-px bg-slate-600" />
-              <h1 className="text-xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+              <div className="h-4 sm:h-6 w-px bg-slate-600" />
+              <h1 className="text-sm sm:text-xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
                 Cosmic Portfolio Builder
               </h1>
             </div>
             
-            <div className="flex items-center gap-2">
+            {/* Action Buttons - Responsive Grid */}
+            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 w-full sm:w-auto justify-end">
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Button
                   variant="outline"
@@ -208,12 +210,13 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
                         : "Changes will auto-compile",
                     });
                   }}
-                  className={`flex items-center gap-2 border-slate-500/50 text-slate-300 hover:bg-slate-500/10 ${
+                  className={`flex items-center gap-1 sm:gap-2 border-slate-500/50 text-slate-300 hover:bg-slate-500/10 text-xs sm:text-sm px-2 sm:px-3 ${
                     autoCompileEnabled ? 'bg-green-500/20 border-green-500/50 text-green-300' : ''
                   }`}
                 >
-                  <Zap className="w-4 h-4" />
-                  Auto-compile {autoCompileEnabled ? 'ON' : 'OFF'}
+                  <Zap className="w-3 h-3 sm:w-4 sm:h-4" />
+                  <span className="hidden sm:inline">Auto-compile</span>
+                  <span className="sm:hidden">{autoCompileEnabled ? 'ON' : 'OFF'}</span>
                 </Button>
               </motion.div>
               
@@ -223,10 +226,11 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
                   size="sm"
                   onClick={handleCompile}
                   disabled={isCompiling}
-                  className="flex items-center gap-2 border-cyan-500/50 text-cyan-300 hover:bg-cyan-500/10"
+                  className="flex items-center gap-1 sm:gap-2 border-cyan-500/50 text-cyan-300 hover:bg-cyan-500/10 text-xs sm:text-sm px-2 sm:px-3"
                 >
-                  <Zap className="w-4 h-4" />
-                  {isCompiling ? "Compiling..." : "Compile"}
+                  <Zap className="w-3 h-3 sm:w-4 sm:h-4" />
+                  <span className="hidden sm:inline">{isCompiling ? "Compiling..." : "Compile"}</span>
+                  <span className="sm:hidden">⚡</span>
                 </Button>
               </motion.div>
               
@@ -235,10 +239,11 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
                   variant="outline"
                   size="sm"
                   onClick={handleDownloadTeX}
-                  className="flex items-center gap-2 border-purple-500/50 text-purple-300 hover:bg-purple-500/10"
+                  className="flex items-center gap-1 sm:gap-2 border-purple-500/50 text-purple-300 hover:bg-purple-500/10 text-xs sm:text-sm px-2 sm:px-3"
                 >
-                  <FileText className="w-4 h-4" />
-                  Download .tex
+                  <FileText className="w-3 h-3 sm:w-4 sm:h-4" />
+                  <span className="hidden sm:inline">.tex</span>
+                  <span className="sm:hidden">📄</span>
                 </Button>
               </motion.div>
               
@@ -246,10 +251,11 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
                 <Button
                   size="sm"
                   onClick={handleDownloadPDF}
-                  className="flex items-center gap-2 bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-400 hover:to-purple-400 text-white"
+                  className="flex items-center gap-1 sm:gap-2 bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-400 hover:to-purple-400 text-white text-xs sm:text-sm px-2 sm:px-3"
                 >
-                  <Download className="w-4 h-4" />
-                  Download PDF
+                  <Download className="w-3 h-3 sm:w-4 sm:h-4" />
+                  <span className="hidden sm:inline">PDF</span>
+                  <span className="sm:hidden">📥</span>
                 </Button>
               </motion.div>
             </div>
@@ -257,22 +263,31 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
         </div>
       </motion.div>
 
-      {/* Main Content */}
-      <div className="relative z-10 container mx-auto px-4 py-6">
+      {/* Main Content - Responsive */}
+      <div className="relative z-10 container mx-auto px-3 sm:px-4 py-4 sm:py-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          <Tabs defaultValue="editor" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-3 bg-slate-900/50 backdrop-blur-sm border border-slate-700/50">
-              <TabsTrigger value="templates" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500/20 data-[state=active]:to-purple-500/20">
+          <Tabs defaultValue="editor" className="space-y-4 sm:space-y-6">
+            <TabsList className="grid w-full grid-cols-3 bg-slate-900/50 backdrop-blur-sm border border-slate-700/50 h-10 sm:h-auto">
+              <TabsTrigger 
+                value="templates" 
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500/20 data-[state=active]:to-purple-500/20 text-xs sm:text-sm py-2"
+              >
                 Templates
               </TabsTrigger>
-              <TabsTrigger value="editor" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500/20 data-[state=active]:to-purple-500/20">
+              <TabsTrigger 
+                value="editor" 
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500/20 data-[state=active]:to-purple-500/20 text-xs sm:text-sm py-2"
+              >
                 Editor
               </TabsTrigger>
-              <TabsTrigger value="preview" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500/20 data-[state=active]:to-purple-500/20">
+              <TabsTrigger 
+                value="preview" 
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500/20 data-[state=active]:to-purple-500/20 text-xs sm:text-sm py-2"
+              >
                 Preview
               </TabsTrigger>
             </TabsList>
@@ -299,12 +314,12 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
                   transition={{ duration: 0.3 }}
-                  className="grid lg:grid-cols-2 gap-6 h-[80vh]"
+                  className="grid lg:grid-cols-2 gap-4 sm:gap-6 h-[70vh] sm:h-[80vh]"
                 >
                   <Card className="flex flex-col bg-slate-900/40 backdrop-blur-sm border border-slate-700/50">
-                    <CardHeader className="pb-2">
-                      <CardTitle className="flex items-center gap-2 text-cyan-300">
-                        <Rocket className="w-5 h-5" />
+                    <CardHeader className="pb-2 px-3 sm:px-6 py-3 sm:py-6">
+                      <CardTitle className="flex items-center gap-2 text-cyan-300 text-sm sm:text-base">
+                        <Rocket className="w-4 h-4 sm:w-5 sm:h-5" />
                         LaTeX Editor
                       </CardTitle>
                     </CardHeader>
@@ -317,9 +332,9 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
                   </Card>
 
                   <Card className="flex flex-col bg-slate-900/40 backdrop-blur-sm border border-slate-700/50">
-                    <CardHeader className="pb-2">
-                      <CardTitle className="flex items-center gap-2 text-purple-300">
-                        <Eye className="w-5 h-5" />
+                    <CardHeader className="pb-2 px-3 sm:px-6 py-3 sm:py-6">
+                      <CardTitle className="flex items-center gap-2 text-purple-300 text-sm sm:text-base">
+                        <Eye className="w-4 h-4 sm:w-5 sm:h-5" />
                         Live Preview
                       </CardTitle>
                     </CardHeader>
@@ -341,8 +356,8 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
                   transition={{ duration: 0.3 }}
                 >
                   <Card className="bg-slate-900/40 backdrop-blur-sm border border-slate-700/50">
-                    <CardHeader>
-                      <CardTitle className="text-cyan-300">Portfolio Preview</CardTitle>
+                    <CardHeader className="px-3 sm:px-6 py-3 sm:py-6">
+                      <CardTitle className="text-cyan-300 text-sm sm:text-base">Portfolio Preview</CardTitle>
                     </CardHeader>
                     <CardContent className="p-0">
                       <PDFPreview
