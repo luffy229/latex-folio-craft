@@ -1,80 +1,36 @@
 
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. */
-
 @layer base {
   :root {
-    --background: 15 23 42;
-    --foreground: 226 232 240;
-
-    --card: 15 23 42;
-    --card-foreground: 226 232 240;
-
-    --popover: 15 23 42;
-    --popover-foreground: 226 232 240;
-
-    --primary: 6 182 212;
-    --primary-foreground: 15 23 42;
-
-    --secondary: 88 28 135;
-    --secondary-foreground: 226 232 240;
-
-    --muted: 51 65 85;
-    --muted-foreground: 148 163 184;
-
-    --accent: 124 58 237;
-    --accent-foreground: 226 232 240;
-
-    --destructive: 239 68 68;
-    --destructive-foreground: 248 250 252;
-
-    --border: 51 65 85;
-    --input: 51 65 85;
-    --ring: 6 182 212;
-
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 200 98% 39%;
+    --primary-foreground: 222.2 84% 4.9%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 200 98% 39%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
     --radius: 0.75rem;
-
-    --sidebar-background: 15 23 42;
-    --sidebar-foreground: 148 163 184;
-    --sidebar-primary: 6 182 212;
-    --sidebar-primary-foreground: 15 23 42;
-    --sidebar-accent: 51 65 85;
-    --sidebar-accent-foreground: 226 232 240;
-    --sidebar-border: 51 65 85;
-    --sidebar-ring: 6 182 212;
-  }
-
-  .dark {
-    --background: 15 23 42;
-    --foreground: 226 232 240;
-    --card: 15 23 42;
-    --card-foreground: 226 232 240;
-    --popover: 15 23 42;
-    --popover-foreground: 226 232 240;
-    --primary: 6 182 212;
-    --primary-foreground: 15 23 42;
-    --secondary: 88 28 135;
-    --secondary-foreground: 226 232 240;
-    --muted: 51 65 85;
-    --muted-foreground: 148 163 184;
-    --accent: 124 58 237;
-    --accent-foreground: 226 232 240;
-    --destructive: 239 68 68;
-    --destructive-foreground: 248 250 252;
-    --border: 51 65 85;
-    --input: 51 65 85;
-    --ring: 6 182 212;
-    --sidebar-background: 15 23 42;
-    --sidebar-foreground: 148 163 184;
-    --sidebar-primary: 6 182 212;
-    --sidebar-primary-foreground: 15 23 42;
-    --sidebar-accent: 51 65 85;
-    --sidebar-accent-foreground: 226 232 240;
-    --sidebar-border: 51 65 85;
-    --sidebar-ring: 6 182 212;
   }
 }
 
@@ -82,65 +38,55 @@
   * {
     @apply border-border;
   }
-
   body {
     @apply bg-background text-foreground;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    cursor: none; /* Hide default cursor for custom cursor */
   }
 }
 
-@layer utilities {
-  .animate-float {
-    animation: float 6s ease-in-out infinite;
-  }
-  
-  .animate-pulse-slow {
-    animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  }
-  
+@layer components {
   .animate-gradient {
     background-size: 400% 400%;
     animation: gradient 8s ease infinite;
   }
 
-  .animate-cosmic-rotate {
-    animation: cosmic-rotate 20s linear infinite;
-  }
-
-  .animate-cosmic-pulse {
-    animation: cosmic-pulse 4s ease-in-out infinite;
-  }
-
-  .animate-nebula {
-    animation: nebula 12s ease-in-out infinite;
+  .animation-delay-500 {
+    animation-delay: 500ms;
   }
 
   .perspective-1000 {
     perspective: 1000px;
   }
 
-  .animation-delay-500 {
-    animation-delay: 0.5s;
+  .hover-scale {
+    @apply transition-transform duration-300 hover:scale-105;
   }
 
-  .animation-delay-1000 {
-    animation-delay: 1s;
+  .interactive {
+    cursor: pointer;
   }
 
-  .animation-delay-1500 {
-    animation-delay: 1.5s;
+  .glow-effect {
+    box-shadow: 
+      0 0 20px rgba(6, 182, 212, 0.3),
+      0 0 40px rgba(6, 182, 212, 0.2),
+      0 0 60px rgba(6, 182, 212, 0.1);
   }
-}
 
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0px) rotate(0deg);
+  .text-glow {
+    text-shadow: 
+      0 0 10px rgba(6, 182, 212, 0.5),
+      0 0 20px rgba(6, 182, 212, 0.3),
+      0 0 30px rgba(6, 182, 212, 0.2);
   }
-  33% {
-    transform: translateY(-20px) rotate(5deg);
+
+  .floating-animation {
+    animation: floating 6s ease-in-out infinite;
   }
-  66% {
-    transform: translateY(-10px) rotate(-5deg);
+
+  .pulse-glow {
+    animation: pulseGlow 2s ease-in-out infinite;
   }
 }
 
@@ -156,53 +102,30 @@
   }
 }
 
-@keyframes cosmic-rotate {
-  0% {
-    transform: rotate(0deg) scale(1);
+@keyframes floating {
+  0%, 100% {
+    transform: translateY(0px);
   }
   50% {
-    transform: rotate(180deg) scale(1.1);
-  }
-  100% {
-    transform: rotate(360deg) scale(1);
+    transform: translateY(-20px);
   }
 }
 
-@keyframes cosmic-pulse {
+@keyframes pulseGlow {
   0%, 100% {
-    transform: scale(1);
-    opacity: 0.8;
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
   }
   50% {
-    transform: scale(1.05);
-    opacity: 1;
+    box-shadow: 0 0 40px rgba(6, 182, 212, 0.6);
   }
 }
 
-@keyframes nebula {
-  0%, 100% {
-    transform: translateX(0) translateY(0) scale(1);
-    opacity: 0.3;
-  }
-  33% {
-    transform: translateX(30px) translateY(-20px) scale(1.1);
-    opacity: 0.6;
-  }
-  66% {
-    transform: translateX(-20px) translateY(30px) scale(0.9);
-    opacity: 0.4;
-  }
+/* Smooth scrolling for the entire page */
+html {
+  scroll-behavior: smooth;
 }
 
-.latex-editor {
-  font-family: 'JetBrains Mono', 'Consolas', 'Monaco', 'Courier New', monospace;
-}
-
-.skeleton {
-  @apply animate-pulse bg-muted;
-}
-
-/* Custom scrollbar for space theme */
+/* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -212,29 +135,32 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #06b6d4, #7c3aed);
+  background: linear-gradient(180deg, #06b6d4, #8b5cf6);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #0891b2, #6d28d9);
+  background: linear-gradient(180deg, #0891b2, #7c3aed);
 }
 
-/* Glowing text effect */
-.glow-text {
-  text-shadow: 0 0 10px rgba(6, 182, 212, 0.5), 0 0 20px rgba(6, 182, 212, 0.3);
+/* Selection styles */
+::selection {
+  background: rgba(6, 182, 212, 0.3);
+  color: white;
 }
 
-/* Space card hover effect */
-.space-card {
-  background: rgba(15, 23, 42, 0.4);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(6, 182, 212, 0.2);
-  transition: all 0.3s ease;
+/* Focus styles for accessibility */
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid #06b6d4;
+  outline-offset: 2px;
 }
 
-.space-card:hover {
-  border-color: rgba(6, 182, 212, 0.5);
-  box-shadow: 0 0 30px rgba(6, 182, 212, 0.2);
+/* Magnetic hover effects */
+.magnetic-hover {
+  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.magnetic-hover:hover {
   transform: translateY(-5px);
 }

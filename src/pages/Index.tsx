@@ -1,4 +1,3 @@
-
 import { useState, useRef } from "react";
 import { motion, useScroll, useTransform, AnimatePresence, useInView } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -8,8 +7,14 @@ import PortfolioBuilder from "@/components/PortfolioBuilder";
 import SpaceBackground from "@/components/SpaceBackground";
 import FloatingElements from "@/components/FloatingElements";
 import Footer from "@/components/Footer";
+import ParticleSystem from "@/components/ParticleSystem";
+import MagneticCursor from "@/components/MagneticCursor";
+import ScrollProgressBar from "@/components/ScrollProgressBar";
+import InteractiveText from "@/components/InteractiveText";
+import GlowingOrbs from "@/components/GlowingOrbs";
 import { useLenis } from "@/hooks/useLenis";
 import { useGSAP } from "@/hooks/useGSAP";
+import { useSoundEffects } from "@/hooks/useSoundEffects";
 
 const Index = () => {
   const [showBuilder, setShowBuilder] = useState(false);
@@ -29,9 +34,10 @@ const Index = () => {
   const templatesY = useTransform(scrollYProgress, [0, 1], [0, -75]);
   const textScale = useTransform(scrollYProgress, [0, 0.2], [1, 0.8]);
 
-  // Initialize smooth scrolling and GSAP animations
+  // Initialize hooks
   useLenis();
   useGSAP();
+  const { playHoverSound, playClickSound, playSuccessSound } = useSoundEffects();
 
   if (showBuilder) {
     return (
@@ -42,7 +48,10 @@ const Index = () => {
           exit={{ opacity: 0, scale: 0.8, rotateX: -15 }}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         >
-          <PortfolioBuilder onBack={() => setShowBuilder(false)} />
+          <PortfolioBuilder onBack={() => {
+            setShowBuilder(false);
+            playSuccessSound();
+          }} />
         </motion.div>
       </AnimatePresence>
     );
@@ -74,8 +83,13 @@ const Index = () => {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+      {/* Enhanced Background Effects */}
       <SpaceBackground />
       <FloatingElements />
+      <ParticleSystem />
+      <GlowingOrbs />
+      <MagneticCursor />
+      <ScrollProgressBar />
       
       {/* Enhanced Hero Section */}
       <motion.div 
@@ -91,7 +105,8 @@ const Index = () => {
         >
           <motion.div
             variants={itemVariants}
-            className="floating-element inline-flex items-center gap-2 sm:gap-3 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 backdrop-blur-xl border border-cyan-500/30 text-cyan-300 px-4 sm:px-6 lg:px-8 py-3 sm:py-4 rounded-full text-xs sm:text-sm font-medium mb-8 sm:mb-12 shadow-2xl"
+            className="floating-element inline-flex items-center gap-2 sm:gap-3 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 backdrop-blur-xl border border-cyan-500/30 text-cyan-300 px-4 sm:px-6 lg:px-8 py-3 sm:py-4 rounded-full text-xs sm:text-sm font-medium mb-8 sm:mb-12 shadow-2xl interactive"
+            onMouseEnter={playHoverSound}
           >
             <motion.div
               animate={{ rotate: 360 }}
@@ -109,27 +124,21 @@ const Index = () => {
             </motion.div>
           </motion.div>
           
-          <motion.h1
+          <motion.div
             variants={itemVariants}
             className="reveal-text text-5xl sm:text-7xl md:text-8xl lg:text-[12rem] font-black mb-8 sm:mb-12 relative leading-none tracking-tighter"
           >
-            <motion.span 
-              className="bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-gradient bg-[length:400%_400%]"
-              whileHover={{ scale: 1.05 }}
-              transition={{ type: "spring", stiffness: 300 }}
-            >
-              Cosmic
-            </motion.span>
+            <InteractiveText 
+              text="Cosmic"
+              className="bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-gradient bg-[length:400%_400%] block"
+            />
             <br />
-            <motion.span 
-              className="bg-gradient-to-r from-pink-400 via-cyan-400 to-purple-400 bg-clip-text text-transparent animate-gradient bg-[length:400%_400%] animation-delay-500"
-              whileHover={{ scale: 1.05 }}
-              transition={{ type: "spring", stiffness: 300 }}
-            >
-              Folio
-            </motion.span>
+            <InteractiveText 
+              text="Folio"
+              className="bg-gradient-to-r from-pink-400 via-cyan-400 to-purple-400 bg-clip-text text-transparent animate-gradient bg-[length:400%_400%] animation-delay-500 block"
+            />
             
-            {/* Enhanced floating orb */}
+            {/* Enhanced floating orb with magnetic effect */}
             <motion.div
               className="absolute -top-6 sm:-top-12 -right-6 sm:-right-12 w-12 h-12 sm:w-24 sm:h-24 bg-gradient-to-r from-cyan-400 to-purple-500 rounded-full blur-2xl opacity-70"
               animate={{
@@ -143,8 +152,9 @@ const Index = () => {
                 repeat: Infinity,
                 ease: "easeInOut"
               }}
+              whileHover={{ scale: 2, opacity: 1 }}
             />
-          </motion.h1>
+          </motion.div>
           
           <motion.p
             variants={itemVariants}
@@ -152,8 +162,12 @@ const Index = () => {
           >
             Transcend the ordinary. Create portfolios that exist beyond dimensions with the cosmic power of{" "}
             <motion.span 
-              className="text-cyan-400 font-semibold"
-              whileHover={{ textShadow: "0 0 20px rgba(6, 182, 212, 0.8)" }}
+              className="text-cyan-400 font-semibold interactive"
+              whileHover={{ 
+                textShadow: "0 0 20px rgba(6, 182, 212, 0.8)",
+                scale: 1.05,
+              }}
+              onMouseEnter={playHoverSound}
             >
               LaTeX
             </motion.span>
@@ -171,8 +185,12 @@ const Index = () => {
             >
               <Button
                 size="lg"
-                onClick={() => setShowBuilder(true)}
-                className="relative text-lg sm:text-xl px-8 sm:px-12 py-8 sm:py-10 rounded-3xl bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white font-bold shadow-2xl overflow-hidden border-2 border-cyan-400/50 w-full sm:w-auto"
+                onClick={() => {
+                  setShowBuilder(true);
+                  playClickSound();
+                }}
+                onMouseEnter={playHoverSound}
+                className="interactive relative text-lg sm:text-xl px-8 sm:px-12 py-8 sm:py-10 rounded-3xl bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white font-bold shadow-2xl overflow-hidden border-2 border-cyan-400/50 w-full sm:w-auto"
               >
                 <motion.div
                   className="absolute inset-0 bg-gradient-to-r from-white/30 to-transparent"
@@ -204,7 +222,8 @@ const Index = () => {
               <Button
                 variant="outline"
                 size="lg"
-                className="text-lg sm:text-xl px-8 sm:px-12 py-8 sm:py-10 rounded-3xl border-3 border-cyan-400/60 bg-slate-900/60 backdrop-blur-xl text-cyan-300 hover:bg-cyan-400/20 hover:border-cyan-400 transition-all duration-500 shadow-xl w-full sm:w-auto"
+                onMouseEnter={playHoverSound}
+                className="interactive text-lg sm:text-xl px-8 sm:px-12 py-8 sm:py-10 rounded-3xl border-3 border-cyan-400/60 bg-slate-900/60 backdrop-blur-xl text-cyan-300 hover:bg-cyan-400/20 hover:border-cyan-400 transition-all duration-500 shadow-xl w-full sm:w-auto"
               >
                 <Globe className="w-6 h-6 sm:w-7 sm:h-7 mr-3 sm:mr-4" />
                 <span className="hidden sm:inline">Explore Templates</span>
@@ -468,8 +487,12 @@ const Index = () => {
           transition={{ duration: 2, repeat: Infinity }}
         >
           <Button
-            onClick={() => setShowBuilder(true)}
-            className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 shadow-2xl border-2 border-cyan-400/50 backdrop-blur-sm"
+            onClick={() => {
+              setShowBuilder(true);
+              playClickSound();
+            }}
+            onMouseEnter={playHoverSound}
+            className="interactive w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 shadow-2xl border-2 border-cyan-400/50 backdrop-blur-sm"
           >
             <motion.div
               animate={{ rotate: [0, 10, -10, 0] }}
