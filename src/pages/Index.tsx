@@ -217,58 +217,93 @@ const Index = () => {
         className="relative z-10 container mx-auto px-4 mb-32"
       >
         <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          animate={featuresInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 1 }}
+          className="text-center mb-20"
+        >
+          <motion.h2 
+            className="reveal-text text-6xl md:text-7xl font-bold mb-8 bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent"
+            whileHover={{ scale: 1.05 }}
+            transition={{ type: "spring", stiffness: 300 }}
+          >
+            Quantum Features
+          </motion.h2>
+          <p className="text-2xl text-slate-300 max-w-3xl mx-auto font-light">
+            Harness the power of advanced technology to create portfolios that transcend reality
+          </p>
+        </motion.div>
+
+        <motion.div
           initial={{ opacity: 0 }}
           animate={featuresInView ? { opacity: 1 } : { opacity: 0 }}
           transition={{ duration: 1 }}
-          className="grid md:grid-cols-3 gap-10"
+          className="grid lg:grid-cols-3 gap-12"
         >
           {[
             {
               icon: Code,
               title: "Quantum Templates",
-              description: "Templates that exist in multiple dimensions - professional, academic, creative, and minimal realities",
-              gradient: "from-cyan-500 to-blue-600"
+              description: "Templates that exist in multiple dimensions - professional, academic, creative, and minimal realities designed for every career path",
+              gradient: "from-cyan-500 to-blue-600",
+              delay: 0
             },
             {
               icon: Zap,
               title: "Real-time Compilation",
-              description: "Watch your portfolio materialize instantly as LaTeX code transforms into stellar documents",
-              gradient: "from-purple-500 to-pink-600"
+              description: "Watch your portfolio materialize instantly as LaTeX code transforms into stellar documents with live preview technology",
+              gradient: "from-purple-500 to-pink-600", 
+              delay: 0.2
             },
             {
               icon: Download,
               title: "Cosmic Downloads",
-              description: "Download both LaTeX source and compiled PDF - your creations ready for any universe",
-              gradient: "from-pink-500 to-orange-600"
+              description: "Download both LaTeX source and compiled PDF - your creations ready for any universe or dimension you wish to explore",
+              gradient: "from-pink-500 to-orange-600",
+              delay: 0.4
             }
           ].map((feature, index) => (
             <motion.div
               key={feature.title}
               initial={{ opacity: 0, y: 100, rotateX: 45 }}
               animate={featuresInView ? { opacity: 1, y: 0, rotateX: 0 } : {}}
-              transition={{ duration: 0.8, delay: index * 0.3, type: "spring", stiffness: 100 }}
+              transition={{ duration: 0.8, delay: feature.delay, type: "spring", stiffness: 100 }}
               className="cosmic-card perspective-1000"
             >
-              <Card className="group relative h-full bg-slate-900/50 backdrop-blur-xl border-2 border-slate-700/50 hover:border-cyan-400/60 transition-all duration-700 overflow-hidden rounded-2xl shadow-2xl">
+              <Card className="group relative h-full bg-slate-900/60 backdrop-blur-xl border-2 border-slate-700/40 hover:border-cyan-400/70 transition-all duration-700 overflow-hidden rounded-3xl shadow-2xl">
                 <motion.div
-                  className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-20 transition-opacity duration-700`}
+                  className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-15 transition-opacity duration-700`}
                 />
-                <CardHeader className="text-center relative z-10 p-8">
+                
+                {/* Animated border glow */}
+                <motion.div
+                  className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-30 blur-xl transition-opacity duration-700`}
+                  animate={{
+                    scale: [1, 1.05, 1],
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                />
+                
+                <CardHeader className="text-center relative z-10 p-10">
                   <motion.div
-                    className={`w-24 h-24 bg-gradient-to-br ${feature.gradient} rounded-3xl flex items-center justify-center mx-auto mb-8 relative shadow-2xl`}
+                    className={`w-28 h-28 bg-gradient-to-br ${feature.gradient} rounded-3xl flex items-center justify-center mx-auto mb-8 relative shadow-2xl`}
                     whileHover={{ 
                       rotate: 360,
-                      scale: 1.1,
-                      boxShadow: "0 0 40px rgba(6, 182, 212, 0.5)"
+                      scale: 1.15,
+                      boxShadow: "0 0 50px rgba(6, 182, 212, 0.6)"
                     }}
                     transition={{ duration: 0.8 }}
                   >
-                    <feature.icon className="w-12 h-12 text-white" />
+                    <feature.icon className="w-14 h-14 text-white" />
                     <motion.div
-                      className="absolute inset-0 bg-white/30 rounded-3xl"
+                      className="absolute inset-0 bg-white/20 rounded-3xl"
                       animate={{
                         scale: [1, 1.3, 1],
-                        opacity: [0.5, 0, 0.5],
+                        opacity: [0.3, 0, 0.3],
                       }}
                       transition={{
                         duration: 3,
@@ -276,7 +311,7 @@ const Index = () => {
                       }}
                     />
                   </motion.div>
-                  <CardTitle className="text-3xl text-slate-100 mb-6 font-bold">{feature.title}</CardTitle>
+                  <CardTitle className="text-3xl text-slate-100 mb-6 font-bold leading-tight">{feature.title}</CardTitle>
                   <CardDescription className="text-slate-300 text-lg leading-relaxed">
                     {feature.description}
                   </CardDescription>
@@ -306,52 +341,101 @@ const Index = () => {
           >
             Interdimensional Templates
           </motion.h2>
-          <p className="text-2xl text-slate-300 max-w-3xl mx-auto font-light">
-            Each template exists in its own reality, crafted for different purposes across the multiverse
+          <p className="text-2xl text-slate-300 max-w-4xl mx-auto font-light leading-relaxed">
+            Each template exists in its own reality, meticulously crafted for different purposes across the multiverse of professional excellence
           </p>
         </motion.div>
         
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10">
-          {["Professional", "Academic", "Creative", "Minimal"].map((template, index) => (
+        <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-8">
+          {[
+            { name: "Professional", icon: FileText, gradient: "from-cyan-500 to-blue-600", description: "Corporate excellence" },
+            { name: "Academic", icon: Eye, gradient: "from-purple-500 to-indigo-600", description: "Scholarly achievements" },
+            { name: "Creative", icon: Palette, gradient: "from-pink-500 to-orange-600", description: "Artistic expression" },
+            { name: "Minimal", icon: Sparkles, gradient: "from-emerald-500 to-teal-600", description: "Clean simplicity" }
+          ].map((template, index) => (
             <motion.div
-              key={template}
+              key={template.name}
               initial={{ opacity: 0, y: 100, rotateY: 45 }}
               animate={templatesInView ? { opacity: 1, y: 0, rotateY: 0 } : {}}
-              transition={{ duration: 0.8, delay: index * 0.2, type: "spring", stiffness: 100 }}
+              transition={{ duration: 0.8, delay: index * 0.15, type: "spring", stiffness: 100 }}
               className="cosmic-card perspective-1000"
             >
-              <Card className="group cursor-pointer bg-slate-900/50 backdrop-blur-xl border-2 border-slate-700/50 hover:border-purple-400/60 transition-all duration-700 overflow-hidden relative rounded-2xl shadow-2xl">
+              <Card className="group cursor-pointer bg-slate-900/60 backdrop-blur-xl border-2 border-slate-700/40 hover:border-purple-400/70 transition-all duration-700 overflow-hidden relative rounded-3xl shadow-2xl h-full">
                 <motion.div
-                  className="absolute inset-0 bg-gradient-to-br from-purple-500/20 to-cyan-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-700"
+                  className={`absolute inset-0 bg-gradient-to-br ${template.gradient} opacity-0 group-hover:opacity-15 transition-opacity duration-700`}
                 />
-                <CardContent className="p-10 relative z-10">
+                
+                {/* Glowing edge effect */}
+                <motion.div
+                  className={`absolute inset-0 bg-gradient-to-br ${template.gradient} opacity-0 group-hover:opacity-25 blur-xl transition-opacity duration-700`}
+                />
+                
+                <CardContent className="p-8 relative z-10 h-full flex flex-col">
                   <motion.div
-                    className="w-full h-48 bg-gradient-to-br from-slate-800 to-slate-700 rounded-2xl mb-8 flex items-center justify-center relative overflow-hidden shadow-xl"
+                    className={`w-full h-40 bg-gradient-to-br ${template.gradient} rounded-2xl mb-6 flex items-center justify-center relative overflow-hidden shadow-xl`}
                     whileHover={{ scale: 1.05, rotateY: 10 }}
                     transition={{ duration: 0.5 }}
                   >
                     <motion.div
                       animate={{ rotate: 360 }}
-                      transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                      transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+                      className="relative z-10"
                     >
-                      <Palette className="w-16 h-16 text-purple-400" />
+                      <template.icon className="w-16 h-16 text-white" />
                     </motion.div>
+                    
+                    {/* Animated overlay */}
                     <motion.div
-                      className="absolute inset-0 bg-gradient-to-r from-cyan-500/30 to-purple-500/30"
+                      className="absolute inset-0 bg-gradient-to-r from-white/20 via-transparent to-white/20"
                       animate={{
                         x: ["-100%", "100%"],
                       }}
                       transition={{
-                        duration: 4,
+                        duration: 3,
                         repeat: Infinity,
                         ease: "linear"
                       }}
                     />
+                    
+                    {/* Floating particles */}
+                    <motion.div
+                      className="absolute inset-0"
+                      animate={{
+                        backgroundPosition: ["0% 0%", "100% 100%"],
+                      }}
+                      transition={{
+                        duration: 8,
+                        repeat: Infinity,
+                        ease: "linear"
+                      }}
+                      style={{
+                        backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px)",
+                        backgroundSize: "20px 20px"
+                      }}
+                    />
                   </motion.div>
-                  <h3 className="font-bold text-2xl text-slate-100 mb-4">{template}</h3>
-                  <p className="text-slate-400 text-lg">
-                    Perfect for {template.toLowerCase()} portfolios across all dimensions
-                  </p>
+                  
+                  <div className="flex-grow">
+                    <h3 className="font-bold text-2xl text-slate-100 mb-3">{template.name}</h3>
+                    <p className="text-slate-400 text-lg leading-relaxed">
+                      {template.description}
+                    </p>
+                  </div>
+                  
+                  {/* Interactive hover indicator */}
+                  <motion.div
+                    className="mt-6 flex items-center justify-center"
+                    initial={{ opacity: 0 }}
+                    whileHover={{ opacity: 1 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <motion.div
+                      className={`px-4 py-2 rounded-full bg-gradient-to-r ${template.gradient} text-white text-sm font-medium`}
+                      whileHover={{ scale: 1.05 }}
+                    >
+                      Explore Template
+                    </motion.div>
+                  </motion.div>
                 </CardContent>
               </Card>
             </motion.div>
