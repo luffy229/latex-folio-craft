@@ -7,6 +7,7 @@ import { FileText, Download, Eye, Zap, Palette, Code, Rocket, Stars, Globe, Spar
 import PortfolioBuilder from "@/components/PortfolioBuilder";
 import SpaceBackground from "@/components/SpaceBackground";
 import FloatingElements from "@/components/FloatingElements";
+import Footer from "@/components/Footer";
 import { useLenis } from "@/hooks/useLenis";
 import { useGSAP } from "@/hooks/useGSAP";
 
@@ -80,36 +81,37 @@ const Index = () => {
       <motion.div 
         ref={heroRef}
         style={{ y: heroY, opacity: heroOpacity, scale: textScale }}
-        className="relative z-10 container mx-auto px-4 pt-32 pb-24"
+        className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 pt-16 sm:pt-24 lg:pt-32 pb-16 sm:pb-20 lg:pb-24"
       >
         <motion.div
           variants={containerVariants}
           initial="hidden"
           animate={heroInView ? "visible" : "hidden"}
-          className="text-center mb-16"
+          className="text-center mb-12 sm:mb-16"
         >
           <motion.div
             variants={itemVariants}
-            className="floating-element inline-flex items-center gap-3 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 backdrop-blur-xl border border-cyan-500/30 text-cyan-300 px-8 py-4 rounded-full text-sm font-medium mb-12 shadow-2xl"
+            className="floating-element inline-flex items-center gap-2 sm:gap-3 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 backdrop-blur-xl border border-cyan-500/30 text-cyan-300 px-4 sm:px-6 lg:px-8 py-3 sm:py-4 rounded-full text-xs sm:text-sm font-medium mb-8 sm:mb-12 shadow-2xl"
           >
             <motion.div
               animate={{ rotate: 360 }}
               transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
             >
-              <Rocket className="w-5 h-5" />
+              <Rocket className="w-4 h-4 sm:w-5 sm:h-5" />
             </motion.div>
-            LaTeX Portfolio Builder - Beyond Reality
+            <span className="hidden sm:inline">LaTeX Portfolio Builder - Beyond Reality</span>
+            <span className="sm:hidden">Portfolio Builder</span>
             <motion.div
               animate={{ scale: [1, 1.2, 1] }}
               transition={{ duration: 2, repeat: Infinity }}
             >
-              <Stars className="w-5 h-5" />
+              <Stars className="w-4 h-4 sm:w-5 sm:h-5" />
             </motion.div>
           </motion.div>
           
           <motion.h1
             variants={itemVariants}
-            className="reveal-text text-8xl md:text-[12rem] font-black mb-12 relative leading-none tracking-tighter"
+            className="reveal-text text-5xl sm:text-7xl md:text-8xl lg:text-[12rem] font-black mb-8 sm:mb-12 relative leading-none tracking-tighter"
           >
             <motion.span 
               className="bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-gradient bg-[length:400%_400%]"
@@ -129,7 +131,7 @@ const Index = () => {
             
             {/* Enhanced floating orb */}
             <motion.div
-              className="absolute -top-12 -right-12 w-24 h-24 bg-gradient-to-r from-cyan-400 to-purple-500 rounded-full blur-2xl opacity-70"
+              className="absolute -top-6 sm:-top-12 -right-6 sm:-right-12 w-12 h-12 sm:w-24 sm:h-24 bg-gradient-to-r from-cyan-400 to-purple-500 rounded-full blur-2xl opacity-70"
               animate={{
                 scale: [1, 1.5, 1],
                 rotate: [0, 180, 360],
@@ -146,7 +148,7 @@ const Index = () => {
           
           <motion.p
             variants={itemVariants}
-            className="reveal-text text-2xl md:text-3xl text-slate-300 max-w-5xl mx-auto mb-16 leading-relaxed font-light"
+            className="reveal-text text-lg sm:text-xl md:text-2xl lg:text-3xl text-slate-300 max-w-3xl lg:max-w-5xl mx-auto mb-12 sm:mb-16 leading-relaxed font-light px-4"
           >
             Transcend the ordinary. Create portfolios that exist beyond dimensions with the cosmic power of{" "}
             <motion.span 
@@ -160,17 +162,17 @@ const Index = () => {
           
           <motion.div
             variants={itemVariants}
-            className="flex flex-col sm:flex-row gap-8 justify-center items-center"
+            className="flex flex-col sm:flex-row gap-6 sm:gap-8 justify-center items-center px-4"
           >
             <motion.div
               whileHover={{ scale: 1.1, rotateY: 5 }}
               whileTap={{ scale: 0.95 }}
-              className="group"
+              className="group w-full sm:w-auto"
             >
               <Button
                 size="lg"
                 onClick={() => setShowBuilder(true)}
-                className="relative text-xl px-12 py-10 rounded-3xl bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white font-bold shadow-2xl overflow-hidden border-2 border-cyan-400/50"
+                className="relative text-lg sm:text-xl px-8 sm:px-12 py-8 sm:py-10 rounded-3xl bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white font-bold shadow-2xl overflow-hidden border-2 border-cyan-400/50 w-full sm:w-auto"
               >
                 <motion.div
                   className="absolute inset-0 bg-gradient-to-r from-white/30 to-transparent"
@@ -182,9 +184,10 @@ const Index = () => {
                   animate={{ rotate: [0, 10, 0] }}
                   transition={{ duration: 2, repeat: Infinity }}
                 >
-                  <Rocket className="w-7 h-7 mr-4" />
+                  <Rocket className="w-6 h-6 sm:w-7 sm:h-7 mr-3 sm:mr-4" />
                 </motion.div>
-                Launch Into Space
+                <span className="hidden sm:inline">Launch Into Space</span>
+                <span className="sm:hidden">Launch</span>
                 <motion.div
                   className="absolute -inset-2 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-3xl blur-lg opacity-30 group-hover:opacity-60"
                   animate={{ scale: [1, 1.1, 1] }}
@@ -196,14 +199,16 @@ const Index = () => {
             <motion.div
               whileHover={{ scale: 1.1, rotateY: -5 }}
               whileTap={{ scale: 0.95 }}
+              className="w-full sm:w-auto"
             >
               <Button
                 variant="outline"
                 size="lg"
-                className="text-xl px-12 py-10 rounded-3xl border-3 border-cyan-400/60 bg-slate-900/60 backdrop-blur-xl text-cyan-300 hover:bg-cyan-400/20 hover:border-cyan-400 transition-all duration-500 shadow-xl"
+                className="text-lg sm:text-xl px-8 sm:px-12 py-8 sm:py-10 rounded-3xl border-3 border-cyan-400/60 bg-slate-900/60 backdrop-blur-xl text-cyan-300 hover:bg-cyan-400/20 hover:border-cyan-400 transition-all duration-500 shadow-xl w-full sm:w-auto"
               >
-                <Globe className="w-7 h-7 mr-4" />
-                Explore Templates
+                <Globe className="w-6 h-6 sm:w-7 sm:h-7 mr-3 sm:mr-4" />
+                <span className="hidden sm:inline">Explore Templates</span>
+                <span className="sm:hidden">Templates</span>
               </Button>
             </motion.div>
           </motion.div>
@@ -214,22 +219,22 @@ const Index = () => {
       <motion.div
         ref={featuresRef}
         style={{ y: featuresY }}
-        className="relative z-10 container mx-auto px-4 mb-32"
+        className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 mb-24 sm:mb-32"
       >
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={featuresInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 1 }}
-          className="text-center mb-20"
+          className="text-center mb-16 sm:mb-20"
         >
           <motion.h2 
-            className="reveal-text text-6xl md:text-7xl font-bold mb-8 bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent"
+            className="reveal-text text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 sm:mb-8 bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent px-4"
             whileHover={{ scale: 1.05 }}
             transition={{ type: "spring", stiffness: 300 }}
           >
             Quantum Features
           </motion.h2>
-          <p className="text-2xl text-slate-300 max-w-3xl mx-auto font-light">
+          <p className="text-lg sm:text-xl lg:text-2xl text-slate-300 max-w-2xl lg:max-w-3xl mx-auto font-light px-4">
             Harness the power of advanced technology to create portfolios that transcend reality
           </p>
         </motion.div>
@@ -238,7 +243,7 @@ const Index = () => {
           initial={{ opacity: 0 }}
           animate={featuresInView ? { opacity: 1 } : { opacity: 0 }}
           transition={{ duration: 1 }}
-          className="grid lg:grid-cols-3 gap-12"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-12"
         >
           {[
             {
@@ -288,9 +293,9 @@ const Index = () => {
                   }}
                 />
                 
-                <CardHeader className="text-center relative z-10 p-10">
+                <CardHeader className="text-center relative z-10 p-6 sm:p-8 lg:p-10">
                   <motion.div
-                    className={`w-28 h-28 bg-gradient-to-br ${feature.gradient} rounded-3xl flex items-center justify-center mx-auto mb-8 relative shadow-2xl`}
+                    className={`w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 bg-gradient-to-br ${feature.gradient} rounded-3xl flex items-center justify-center mx-auto mb-6 sm:mb-8 relative shadow-2xl`}
                     whileHover={{ 
                       rotate: 360,
                       scale: 1.15,
@@ -298,7 +303,7 @@ const Index = () => {
                     }}
                     transition={{ duration: 0.8 }}
                   >
-                    <feature.icon className="w-14 h-14 text-white" />
+                    <feature.icon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 text-white" />
                     <motion.div
                       className="absolute inset-0 bg-white/20 rounded-3xl"
                       animate={{
@@ -311,8 +316,8 @@ const Index = () => {
                       }}
                     />
                   </motion.div>
-                  <CardTitle className="text-3xl text-slate-100 mb-6 font-bold leading-tight">{feature.title}</CardTitle>
-                  <CardDescription className="text-slate-300 text-lg leading-relaxed">
+                  <CardTitle className="text-2xl sm:text-3xl text-slate-100 mb-4 sm:mb-6 font-bold leading-tight">{feature.title}</CardTitle>
+                  <CardDescription className="text-slate-300 text-base sm:text-lg leading-relaxed">
                     {feature.description}
                   </CardDescription>
                 </CardHeader>
@@ -326,27 +331,27 @@ const Index = () => {
       <motion.div
         ref={templatesRef}
         style={{ y: templatesY }}
-        className="relative z-10 container mx-auto px-4 pb-32"
+        className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 pb-24 sm:pb-32"
       >
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={templatesInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 1 }}
-          className="text-center mb-20"
+          className="text-center mb-16 sm:mb-20"
         >
           <motion.h2 
-            className="reveal-text text-6xl md:text-7xl font-bold mb-8 bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent"
+            className="reveal-text text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 sm:mb-8 bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent px-4"
             whileHover={{ scale: 1.05 }}
             transition={{ type: "spring", stiffness: 300 }}
           >
             Interdimensional Templates
           </motion.h2>
-          <p className="text-2xl text-slate-300 max-w-4xl mx-auto font-light leading-relaxed">
+          <p className="text-lg sm:text-xl lg:text-2xl text-slate-300 max-w-3xl lg:max-w-4xl mx-auto font-light leading-relaxed px-4">
             Each template exists in its own reality, meticulously crafted for different purposes across the multiverse of professional excellence
           </p>
         </motion.div>
         
-        <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
           {[
             { name: "Professional", icon: FileText, gradient: "from-cyan-500 to-blue-600", description: "Corporate excellence" },
             { name: "Academic", icon: Eye, gradient: "from-purple-500 to-indigo-600", description: "Scholarly achievements" },
@@ -370,9 +375,9 @@ const Index = () => {
                   className={`absolute inset-0 bg-gradient-to-br ${template.gradient} opacity-0 group-hover:opacity-25 blur-xl transition-opacity duration-700`}
                 />
                 
-                <CardContent className="p-8 relative z-10 h-full flex flex-col">
+                <CardContent className="p-6 sm:p-8 relative z-10 h-full flex flex-col">
                   <motion.div
-                    className={`w-full h-40 bg-gradient-to-br ${template.gradient} rounded-2xl mb-6 flex items-center justify-center relative overflow-hidden shadow-xl`}
+                    className={`w-full h-32 sm:h-40 bg-gradient-to-br ${template.gradient} rounded-2xl mb-4 sm:mb-6 flex items-center justify-center relative overflow-hidden shadow-xl`}
                     whileHover={{ scale: 1.05, rotateY: 10 }}
                     transition={{ duration: 0.5 }}
                   >
@@ -381,7 +386,7 @@ const Index = () => {
                       transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
                       className="relative z-10"
                     >
-                      <template.icon className="w-16 h-16 text-white" />
+                      <template.icon className="w-12 h-12 sm:w-16 sm:h-16 text-white" />
                     </motion.div>
                     
                     {/* Animated overlay */}
@@ -416,21 +421,21 @@ const Index = () => {
                   </motion.div>
                   
                   <div className="flex-grow">
-                    <h3 className="font-bold text-2xl text-slate-100 mb-3">{template.name}</h3>
-                    <p className="text-slate-400 text-lg leading-relaxed">
+                    <h3 className="font-bold text-xl sm:text-2xl text-slate-100 mb-2 sm:mb-3">{template.name}</h3>
+                    <p className="text-slate-400 text-base sm:text-lg leading-relaxed">
                       {template.description}
                     </p>
                   </div>
                   
                   {/* Interactive hover indicator */}
                   <motion.div
-                    className="mt-6 flex items-center justify-center"
+                    className="mt-4 sm:mt-6 flex items-center justify-center"
                     initial={{ opacity: 0 }}
                     whileHover={{ opacity: 1 }}
                     transition={{ duration: 0.3 }}
                   >
                     <motion.div
-                      className={`px-4 py-2 rounded-full bg-gradient-to-r ${template.gradient} text-white text-sm font-medium`}
+                      className={`px-3 sm:px-4 py-2 rounded-full bg-gradient-to-r ${template.gradient} text-white text-xs sm:text-sm font-medium`}
                       whileHover={{ scale: 1.05 }}
                     >
                       Explore Template
@@ -445,7 +450,7 @@ const Index = () => {
 
       {/* Enhanced Floating Action Button */}
       <motion.div
-        className="fixed bottom-10 right-10 z-50"
+        className="fixed bottom-6 sm:bottom-10 right-6 sm:right-10 z-50"
         initial={{ scale: 0, rotate: -180 }}
         animate={{ scale: 1, rotate: 0 }}
         transition={{ delay: 2, type: "spring", stiffness: 260, damping: 15 }}
@@ -464,17 +469,20 @@ const Index = () => {
         >
           <Button
             onClick={() => setShowBuilder(true)}
-            className="w-20 h-20 rounded-full bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 shadow-2xl border-2 border-cyan-400/50 backdrop-blur-sm"
+            className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 shadow-2xl border-2 border-cyan-400/50 backdrop-blur-sm"
           >
             <motion.div
               animate={{ rotate: [0, 10, -10, 0] }}
               transition={{ duration: 2, repeat: Infinity }}
             >
-              <Rocket className="w-10 h-10 text-white" />
+              <Rocket className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
             </motion.div>
           </Button>
         </motion.div>
       </motion.div>
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 };
