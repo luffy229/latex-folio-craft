@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -82,6 +81,7 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
   const [latexCode, setLatexCode] = useState(defaultLatexCode);
   const [isCompiling, setIsCompiling] = useState(false);
   const [pdfUrl, setPdfUrl] = useState("");
+  const [autoCompileEnabled, setAutoCompileEnabled] = useState(true);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -95,18 +95,37 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
     return () => clearTimeout(timer);
   }, []);
 
+  // Auto-compile when code changes (with debounce)
+  useEffect(() => {
+    if (!autoCompileEnabled || !latexCode.trim()) return;
+    
+    const timer = setTimeout(() => {
+      handleCompile();
+    }, 1000); // 1 second debounce
+
+    return () => clearTimeout(timer);
+  }, [latexCode, autoCompileEnabled]);
+
   const handleCompile = async () => {
+    if (!latexCode.trim()) return;
+    
     setIsCompiling(true);
     
     // Simulate LaTeX compilation
     setTimeout(() => {
       setPdfUrl(`data:application/pdf;base64,${btoa("Mock PDF content")}`);
       setIsCompiling(false);
-      toast({
-        title: "Compilation Complete",
-        description: "Your portfolio has been compiled successfully!",
-      });
+      if (!autoCompileEnabled) {
+        toast({
+          title: "Compilation Complete",
+          description: "Your portfolio has been compiled successfully!",
+        });
+      }
     }, 1500);
+  };
+
+  const handleLatexChange = (newCode: string) => {
+    setLatexCode(newCode);
   };
 
   const handleDownloadTeX = () => {
@@ -176,6 +195,28 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
             </div>
             
             <div className="flex items-center gap-2">
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setAutoCompileEnabled(!autoCompileEnabled);
+                    toast({
+                      title: autoCompileEnabled ? "Auto-compile Disabled" : "Auto-compile Enabled",
+                      description: autoCompileEnabled 
+                        ? "Manual compilation required" 
+                        : "Changes will auto-compile",
+                    });
+                  }}
+                  className={`flex items-center gap-2 border-slate-500/50 text-slate-300 hover:bg-slate-500/10 ${
+                    autoCompileEnabled ? 'bg-green-500/20 border-green-500/50 text-green-300' : ''
+                  }`}
+                >
+                  <Zap className="w-4 h-4" />
+                  Auto-compile {autoCompileEnabled ? 'ON' : 'OFF'}
+                </Button>
+              </motion.div>
+              
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Button
                   variant="outline"
@@ -261,28 +302,28 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
                   className="grid lg:grid-cols-2 gap-6 h-[80vh]"
                 >
                   <Card className="flex flex-col bg-slate-900/40 backdrop-blur-sm border border-slate-700/50">
-                    <CardHeader>
+                    <CardHeader className="pb-2">
                       <CardTitle className="flex items-center gap-2 text-cyan-300">
                         <Rocket className="w-5 h-5" />
                         LaTeX Editor
                       </CardTitle>
                     </CardHeader>
-                    <CardContent className="flex-1">
+                    <CardContent className="flex-1 p-0">
                       <LaTeXEditor
                         code={latexCode}
-                        onChange={setLatexCode}
+                        onChange={handleLatexChange}
                       />
                     </CardContent>
                   </Card>
 
                   <Card className="flex flex-col bg-slate-900/40 backdrop-blur-sm border border-slate-700/50">
-                    <CardHeader>
+                    <CardHeader className="pb-2">
                       <CardTitle className="flex items-center gap-2 text-purple-300">
                         <Eye className="w-5 h-5" />
                         Live Preview
                       </CardTitle>
                     </CardHeader>
-                    <CardContent className="flex-1">
+                    <CardContent className="flex-1 p-0">
                       <PDFPreview
                         pdfUrl={pdfUrl}
                         isCompiling={isCompiling}
@@ -303,7 +344,7 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
                     <CardHeader>
                       <CardTitle className="text-cyan-300">Portfolio Preview</CardTitle>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="p-0">
                       <PDFPreview
                         pdfUrl={pdfUrl}
                         isCompiling={isCompiling}
