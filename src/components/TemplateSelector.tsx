@@ -26,6 +26,7 @@ const templates: Template[] = [
     id: "professional",
     name: "Professional",
     description: "Clean and modern design perfect for corporate positions",
+    category: "business",
     icon: FileText,
     gradient: "from-cyan-500 to-blue-600",
     code: `\\documentclass[11pt,a4paper]{article}
@@ -92,6 +93,7 @@ Dynamic and results-oriented software engineer with 8+ years of experience in fu
     id: "academic",
     name: "Academic",
     description: "Scholarly format ideal for research and academic positions",
+    category: "education",
     icon: GraduationCap,
     gradient: "from-purple-500 to-indigo-600",
     code: `\\documentclass[11pt,a4paper]{article}
@@ -166,6 +168,7 @@ Role: Teaching Assistant | Enrollment: 350 students
     id: "creative",
     name: "Creative",
     description: "Bold and artistic layout for creative professionals",
+    category: "design",
     icon: Palette,
     gradient: "from-pink-500 to-orange-600",
     code: `\\documentclass[11pt,a4paper]{article}
@@ -250,6 +253,7 @@ Passionate creative professional specializing in brand identity and visual story
     id: "minimal",
     name: "Minimal",
     description: "Simple and elegant design focusing on content",
+    category: "simple",
     icon: Minimize2,
     gradient: "from-emerald-500 to-teal-600",
     code: `\\documentclass[11pt,a4paper]{article}
