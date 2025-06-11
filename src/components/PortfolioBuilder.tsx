@@ -2,78 +2,113 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Download, Eye, FileText, Zap } from "lucide-react";
+import { ArrowLeft, Download, Eye, FileText, Copy, RotateCcw, Play } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import LaTeXEditor from "./LaTeXEditor";
 import PDFPreview from "./PDFPreview";
-import TemplateSelector from "./TemplateSelector";
-import LoadingSkeleton from "./LoadingSkeleton";
-import SpaceBackground from "./SpaceBackground";
 
 interface PortfolioBuilderProps {
   onBack: () => void;
 }
 
-const defaultLatexCode = `\\documentclass[11pt,a4paper]{article}
-\\usepackage[utf8]{inputenc}
-\\usepackage[margin=1in]{geometry}
-\\usepackage{enumitem}
-\\usepackage{titlesec}
-\\usepackage{xcolor}
-
-\\definecolor{primarycolor}{RGB}{46, 125, 50}
-\\titleformat{\\section}{\\large\\bfseries\\color{primarycolor}}{}{0em}{}[\\textcolor{primarycolor}{\\titlerule}]
-\\titleformat{\\subsection}{\\bfseries}{}{0em}{}
+const defaultLatexCode = `\\documentclass[10pt, letterpaper]{article}
+\\usepackage[
+    ignoreheadfoot, % set margins without considering header and footer
+    top=2 cm, % seperation between body and page edge from the top
+    bottom=2 cm, % seperation between body and page edge from the bottom
+    left=2 cm, % seperation between body and page edge from the left
+    right=2 cm, % seperation between body and page edge from the right
+    footskip=1.0 cm, % seperation between body and footer
+] {geometry} % for adjusting page geometry
+\\usepackage{titlesec} % for customizing section titles
+\\usepackage{tabularx} % for making tables with fixed width columns
+\\usepackage{array} % tabularx requires this
+\\usepackage[dvipsnames]{xcolor} % for coloring text
+\\definecolor{primaryColor}{RGB}{0, 0, 0} % define primary color
+\\usepackage{enumitem} % for customizing lists
+\\usepackage{fontawesome5} % for using icons
+\\usepackage{amsmath} % for math
+\\usepackage[
+    pdftitle={Pratik Pal's Resume},
+    pdfauthor={Pratik A Pal},
+    pdfcreator={Pratik_A_Pal_resume},
+    colorlinks=true,
+    urlcolor=primaryColor
+]{hyperref} % for links, metadata and bookmarks
+\\usepackage[pscoord]{eso-pic} % for floating text on the page
+\\usepackage{calc} % for calculating lengths
+\\usepackage{bookmark} % for bookmarks
+\\usepackage{lastpage} % for getting the total number of pages
+\\usepackage{changepage} % for one column entries (adjustwidth environment)
+\\usepackage{paracol} % for two and three column entries
+\\usepackage{ifthen} % for conditional statements
 
 \\begin{document}
 
 \\begin{center}
-{\\LARGE \\textbf{John Smith}}\\\\
-\\vspace{5pt}
-{\\large Senior Software Engineer}\\\\
-\\vspace{5pt}
-Email: john.smith@email.com | Phone: (555) 123-4567\\\\
-LinkedIn: linkedin.com/in/johnsmith | GitHub: github.com/johnsmith
+    \\textbf{\\LARGE Pratik A Pal} \\\\
+    \\vspace{5pt}
+    Goa,India | pratik2002pal@gmail.com | 9064 671 54 0 | Portfolio | Linkedin | Github
 \\end{center}
 
-\\section{Professional Summary}
-Dynamic and results-oriented software engineer with 8+ years of experience in full-stack development. Proven track record of delivering scalable solutions and leading cross-functional teams to achieve project goals.
-
-\\section{Experience}
-\\subsection{Senior Software Engineer | TechCorp Inc. | 2020 - Present}
-\\begin{itemize}[leftmargin=20pt]
-\\item Led development of microservices architecture serving 1M+ daily users
-\\item Implemented CI/CD pipelines reducing deployment time by 60\\%
-\\item Mentored 5 junior developers and conducted technical interviews
-\\item Technologies: React, Node.js, AWS, Docker, Kubernetes
-\\end{itemize}
+\\section{Profile}
+Passionate Software Developer with a strong foundation in full stack development, data structures, and scalable web applications. Interested in building performant and intuitive software products that create real world impact.
 
 \\section{Education}
-\\textbf{Master of Science in Computer Science} | Stanford University | 2018\\\\
-\\textbf{Bachelor of Science in Software Engineering} | UC Berkeley | 2016
+\\textbf{Padre Conceicao College Of Engineering}, BE in Electronics And Computer \\hfill Sept 2021 - June 2025 \\\\
+\\textbf{Coursework:} Computer Architecture, Comparison of Learning Algorithms, Computational Theory
+
+\\section{Experience}
+\\textbf{Software Developer Engineer Intern}, Creative Capsule - Verna, GOA \\hfill July 2024 - Aug 2024
+\\begin{itemize}
+    \\item Engineered a real-time Stock Tracker using Next.js, TypeScript, and Tailwind CSS with dynamic UI components
+    \\item Improved initial load time by up to 40\\% through Next.js server-side rendering (SSR) and static site generation (SSG) compared to client-side react
+    \\item Collaborated with developers to implement React best practices and optimize frontend efficiency
+\\end{itemize}
 
 \\section{Technical Skills}
-\\textbf{Languages:} JavaScript, Python, Java, TypeScript, Go\\\\
-\\textbf{Frameworks:} React, Node.js, Django, Spring Boot, Express\\\\
-\\textbf{Tools:} AWS, Docker, Kubernetes, Git, Jenkins, MongoDB
+\\textbf{Languages:} C++, C, Java, Python, JavaScript, TypeScript, HTML, CSS \\\\
+\\textbf{Frameworks:} React.js, Next.js, Node.js, Express.js, Tailwind CSS \\\\
+\\textbf{Tools:} Git, Clerk, Convex, Node.js, Express.js, PostgreSQL \\\\
+\\textbf{Mobile Development:} React Native, Flutter \\\\
+\\textbf{Databases:} MongoDB, PostgreSQL \\\\
+\\textbf{Core Skills:} Data Structures Algorithms (C++), Algorithm Design, Data Science, Machine Learning
+
+\\section{Projects}
+\\textbf{Portfolio Overlap Application} \\hfill Github
+\\begin{itemize}
+    \\item Engineered a web application to perform comprehensive portfolio overlap analysis for mutual funds and stocks.
+    \\item Reduced manual portfolio comparison time by 70\\% using automated overlap detection and clean UI.
+    \\item Technologies: Next.js, Tailwind CSS, TypeScript, Node.js, PostgreSQL
+\\end{itemize}
+
+\\textbf{Muse Streaming Music Platform} \\hfill Live Demo | Github
+\\begin{itemize}
+    \\item Developed a full-stack music streaming platform featuring secure user authentication, real-time chat functionality, and an administrative dashboard for content management.
+    \\item Scaled to support 1000+ concurrent users, ensuring seamless music playback and real-time communication.
+    \\item Technologies: React, Node.js, Express.js, MongoDB, Socket.io, Clerk
+\\end{itemize}
+
+\\textbf{Online Code Editor — Multi-Language Integrated Development Environment (IDE)} \\hfill Live Demo | Github
+\\begin{itemize}
+    \\item Created a VSCode-inspired web-based IDE supporting over 10 programming languages, featuring execution history and workspace management for enhanced code development.
+    \\item Enhanced code execution performance by 30\\% with optimized backend logic using Convex functions.
+\\end{itemize}
 
 \\end{document}`;
 
 const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [selectedTemplate, setSelectedTemplate] = useState("professional");
+  const [selectedSection, setSelectedSection] = useState("Profile");
   const [latexCode, setLatexCode] = useState(defaultLatexCode);
   const [isCompiling, setIsCompiling] = useState(false);
   const [pdfUrl, setPdfUrl] = useState("");
   const [autoCompileEnabled, setAutoCompileEnabled] = useState(true);
   const { toast } = useToast();
 
+  const sections = ["Profile", "Education", "Experience", "Technical Skills", "Projects"];
+
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-      handleCompile();
-    }, 2000);
-    return () => clearTimeout(timer);
+    handleCompile();
   }, []);
 
   useEffect(() => {
@@ -101,6 +136,22 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
 
   const handleLatexChange = (newCode: string) => {
     setLatexCode(newCode);
+  };
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(latexCode);
+    toast({
+      title: "Code Copied!",
+      description: "LaTeX code copied to clipboard",
+    });
+  };
+
+  const handleReset = () => {
+    setLatexCode(defaultLatexCode);
+    toast({
+      title: "Editor Reset",
+      description: "LaTeX code reset to template default",
+    });
   };
 
   const handleDownloadTeX = () => {
@@ -132,26 +183,25 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
     });
   };
 
-  if (isLoading) {
-    return <LoadingSkeleton />;
-  }
-
   return (
-    <div className="min-h-screen bg-slate-900 relative overflow-hidden">
-      <SpaceBackground />
-      
-      {/* Top Header Bar - Exact match to image */}
-      <div className="relative z-10 bg-slate-800/95 backdrop-blur-sm border-b border-slate-700/50 h-14 flex items-center justify-between px-4">
+    <div className="min-h-screen bg-white">
+      {/* Top Header Bar */}
+      <div className="bg-white border-b border-gray-200 h-14 flex items-center justify-between px-4">
         {/* Left - Back button */}
         <Button
           variant="ghost"
           size="sm"
           onClick={onBack}
-          className="text-slate-300 hover:text-white hover:bg-slate-700/50 px-3 py-1.5 h-8"
+          className="text-gray-700 hover:text-gray-900 hover:bg-gray-100 px-3 py-1.5 h-8"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Back
+          Menu
         </Button>
+
+        {/* Center - Title */}
+        <div className="text-gray-800 font-medium">
+          RenderCV EngineeringResumes Theme
+        </div>
 
         {/* Right - Action buttons */}
         <div className="flex items-center gap-2">
@@ -159,73 +209,118 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
             variant="outline"
             size="sm"
             onClick={() => setAutoCompileEnabled(!autoCompileEnabled)}
-            className={`border-slate-600 text-slate-300 hover:bg-slate-700/50 px-3 py-1.5 h-8 text-xs ${
-              autoCompileEnabled ? 'bg-slate-700/50' : ''
+            className={`border-gray-300 text-gray-700 hover:bg-gray-100 px-3 py-1.5 h-8 text-xs ${
+              autoCompileEnabled ? 'bg-gray-100' : ''
             }`}
           >
-            <Zap className="w-3 h-3 mr-1.5" />
             Auto-compile
           </Button>
           
           <Button
-            variant="outline"
             size="sm"
             onClick={handleCompile}
             disabled={isCompiling}
-            className="border-slate-600 text-slate-300 hover:bg-slate-700/50 px-3 py-1.5 h-8 text-xs"
+            className="bg-green-500 hover:bg-green-600 text-white px-3 py-1.5 h-8 text-xs"
           >
-            <Zap className="w-3 h-3 mr-1.5" />
-            Compile
+            <Play className="w-3 h-3 mr-1.5" />
+            Recompile
           </Button>
           
           <Button
             variant="outline"
             size="sm"
-            onClick={handleDownloadTeX}
-            className="border-slate-600 text-slate-300 hover:bg-slate-700/50 px-3 py-1.5 h-8 text-xs"
+            className="border-gray-300 text-gray-700 hover:bg-gray-100 px-2 py-1.5 h-8"
           >
-            <FileText className="w-3 h-3 mr-1.5" />
-            .tex
+            Review
           </Button>
           
           <Button
+            variant="outline"
             size="sm"
-            onClick={handleDownloadPDF}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 h-8 text-xs"
+            className="border-gray-300 text-gray-700 hover:bg-gray-100 px-2 py-1.5 h-8"
           >
-            <Download className="w-3 h-3 mr-1.5" />
-            PDF
+            Share
+          </Button>
+          
+          <Button
+            variant="outline"
+            size="sm"
+            className="border-gray-300 text-gray-700 hover:bg-gray-100 px-2 py-1.5 h-8"
+          >
+            Submit
+          </Button>
+          
+          <Button
+            variant="outline"
+            size="sm"
+            className="border-gray-300 text-gray-700 hover:bg-gray-100 px-2 py-1.5 h-8"
+          >
+            History
           </Button>
         </div>
       </div>
 
-      {/* Main Content - Three panels exactly like the image */}
-      <div className="flex h-[calc(100vh-56px)] relative">
-        {/* Left Sidebar - Templates */}
-        <div className="w-80 bg-slate-800/80 backdrop-blur-sm border-r border-slate-700/50 overflow-y-auto">
+      {/* Main Content - Three panels */}
+      <div className="flex h-[calc(100vh-56px)]">
+        {/* Left Sidebar - File outline */}
+        <div className="w-60 bg-gray-50 border-r border-gray-200">
           <div className="p-4">
-            <div className="mb-4">
-              <h2 className="text-xl font-bold text-cyan-400 mb-2">Cosmic Portfolio Templates</h2>
-              <p className="text-slate-400 text-sm">Choose from our collection of stellar templates, each crafted with unique design elements for different dimensions of professional excellence</p>
+            <h3 className="text-sm font-medium text-gray-800 mb-3">File outline</h3>
+            <div className="space-y-1">
+              {sections.map((section) => (
+                <div
+                  key={section}
+                  onClick={() => setSelectedSection(section)}
+                  className={`px-3 py-2 text-sm cursor-pointer rounded transition-colors ${
+                    selectedSection === section
+                      ? 'bg-gray-200 text-gray-900'
+                      : 'text-gray-700 hover:bg-gray-100'
+                  }`}
+                >
+                  {section}
+                </div>
+              ))}
             </div>
-            <TemplateSelector
-              selectedTemplate={selectedTemplate}
-              onTemplateSelect={setSelectedTemplate}
-              onTemplateLoad={setLatexCode}
-            />
           </div>
         </div>
 
         {/* Center - LaTeX Editor */}
-        <div className="flex-1 border-r border-slate-700/50">
-          <div className="h-full bg-slate-900/50">
-            {/* Editor Tab */}
-            <div className="bg-slate-800/80 border-b border-slate-700/50 px-4 py-2 flex items-center gap-2">
-              <FileText className="w-4 h-4 text-cyan-400" />
-              <span className="text-sm text-slate-300 font-medium">main.tex</span>
+        <div className="flex-1 border-r border-gray-200">
+          <div className="h-full bg-white">
+            {/* Editor Tabs */}
+            <div className="bg-gray-100 border-b border-gray-200 px-4 py-0 flex items-center">
+              <div className="bg-white border-t border-l border-r border-gray-200 px-4 py-2 text-sm font-medium text-gray-800 rounded-t-lg">
+                main.tex
+              </div>
             </div>
+            
+            {/* Editor Toolbar */}
+            <div className="bg-white border-b border-gray-200 px-4 py-2 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-600">Code Editor</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleCopy}
+                  className="text-gray-600 hover:text-gray-800 hover:bg-gray-100 p-2 h-8 w-8"
+                >
+                  <Copy className="w-4 h-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleReset}
+                  className="text-gray-600 hover:text-gray-800 hover:bg-gray-100 p-2 h-8 w-8"
+                >
+                  <RotateCcw className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+
             {/* Editor Content */}
-            <div className="h-[calc(100%-41px)]">
+            <div className="h-[calc(100%-81px)]">
               <LaTeXEditor
                 code={latexCode}
                 onChange={handleLatexChange}
@@ -236,35 +331,41 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
 
         {/* Right - PDF Preview */}
         <div className="flex-1">
-          <div className="h-full bg-slate-900/50">
-            {/* Preview Tab */}
-            <div className="bg-slate-800/80 border-b border-slate-700/50 px-4 py-2 flex items-center justify-between">
+          <div className="h-full bg-white">
+            {/* Preview Header */}
+            <div className="bg-white border-b border-gray-200 px-4 py-2 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Eye className="w-4 h-4 text-cyan-400" />
-                <span className="text-sm text-slate-300 font-medium">Preview</span>
-                {isCompiling && (
-                  <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                  >
-                    <Zap className="w-4 h-4 text-yellow-400" />
-                  </motion.div>
-                )}
+                <Eye className="w-4 h-4 text-gray-600" />
+                <span className="text-sm text-gray-800 font-medium">Portfolio Preview</span>
+                <span className="text-xs text-gray-500">Compiled from LaTeX</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-cyan-400 rounded-full"></div>
-                <span className="text-xs text-slate-400">Portfolio Preview</span>
-                <span className="text-xs text-slate-500">Compiled from LaTeX</span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleDownloadTeX}
+                  className="border-gray-300 text-gray-700 hover:bg-gray-100 px-3 py-1.5 h-7 text-xs"
+                >
+                  .tex
+                </Button>
                 <Button
                   size="sm"
                   onClick={handleDownloadPDF}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 h-6 text-xs ml-2"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 h-7 text-xs"
                 >
-                  <Download className="w-3 h-3 mr-1" />
-                  Download
+                  PDF
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleDownloadPDF}
+                  className="text-gray-600 hover:text-gray-800 hover:bg-gray-100 p-1.5 h-7 w-7"
+                >
+                  <Download className="w-4 h-4" />
                 </Button>
               </div>
             </div>
+            
             {/* Preview Content */}
             <div className="h-[calc(100%-41px)]">
               <PDFPreview
