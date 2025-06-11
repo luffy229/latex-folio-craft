@@ -2,8 +2,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Download, Eye, FileText, Zap, Menu, X } from "lucide-react";
+import { ArrowLeft, Download, Eye, FileText, Zap } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import LaTeXEditor from "./LaTeXEditor";
 import PDFPreview from "./PDFPreview";
@@ -49,14 +48,6 @@ Dynamic and results-oriented software engineer with 8+ years of experience in fu
 \\item Technologies: React, Node.js, AWS, Docker, Kubernetes
 \\end{itemize}
 
-\\subsection{Software Engineer | StartupXYZ | 2018 - 2020}
-\\begin{itemize}[leftmargin=20pt]
-\\item Developed and maintained RESTful APIs using Python and Django
-\\item Collaborated with product team to deliver features for 50K+ users
-\\item Optimized database queries improving response time by 40\\%
-\\item Technologies: Python, Django, PostgreSQL, Redis
-\\end{itemize}
-
 \\section{Education}
 \\textbf{Master of Science in Computer Science} | Stanford University | 2018\\\\
 \\textbf{Bachelor of Science in Software Engineering} | UC Berkeley | 2016
@@ -65,13 +56,6 @@ Dynamic and results-oriented software engineer with 8+ years of experience in fu
 \\textbf{Languages:} JavaScript, Python, Java, TypeScript, Go\\\\
 \\textbf{Frameworks:} React, Node.js, Django, Spring Boot, Express\\\\
 \\textbf{Tools:} AWS, Docker, Kubernetes, Git, Jenkins, MongoDB
-
-\\section{Key Achievements}
-\\begin{itemize}[leftmargin=20pt]
-\\item Led team that delivered project 2 weeks ahead of schedule
-\\item Reduced system downtime by 95\\% through monitoring implementation
-\\item AWS Certified Solutions Architect - Professional (2022)
-\\end{itemize}
 
 \\end{document}`;
 
@@ -82,7 +66,6 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
   const [isCompiling, setIsCompiling] = useState(false);
   const [pdfUrl, setPdfUrl] = useState("");
   const [autoCompileEnabled, setAutoCompileEnabled] = useState(true);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -90,25 +73,20 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
       setIsLoading(false);
       handleCompile();
     }, 2000);
-
     return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
     if (!autoCompileEnabled || !latexCode.trim()) return;
-    
     const timer = setTimeout(() => {
       handleCompile();
     }, 1000);
-
     return () => clearTimeout(timer);
   }, [latexCode, autoCompileEnabled]);
 
   const handleCompile = async () => {
     if (!latexCode.trim()) return;
-    
     setIsCompiling(true);
-    
     setTimeout(() => {
       setPdfUrl(`data:application/pdf;base64,${btoa("Mock PDF content")}`);
       setIsCompiling(false);
@@ -133,7 +111,6 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
     a.download = "portfolio.tex";
     a.click();
     URL.revokeObjectURL(url);
-    
     toast({
       title: "Download Started",
       description: "LaTeX source file downloaded successfully!",
@@ -149,7 +126,6 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
       });
       return;
     }
-    
     toast({
       title: "Download Started",
       description: "PDF file downloaded successfully!",
@@ -161,44 +137,33 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
   }
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-slate-900">
+    <div className="min-h-screen bg-slate-900 relative overflow-hidden">
       <SpaceBackground />
       
       {/* Top Header Bar - Exact match to image */}
-      <div className="relative z-10 bg-slate-800/90 backdrop-blur border-b border-slate-700 flex items-center justify-between px-4 py-2 h-14">
-        {/* Left side */}
-        <div className="flex items-center gap-3">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="lg:hidden text-slate-300 hover:text-white hover:bg-slate-700 p-2"
-          >
-            {sidebarOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
-          </Button>
-          
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onBack}
-            className="text-slate-300 hover:text-white hover:bg-slate-700 px-3"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back
-          </Button>
-        </div>
+      <div className="relative z-10 bg-slate-800/95 backdrop-blur-sm border-b border-slate-700/50 h-14 flex items-center justify-between px-4">
+        {/* Left - Back button */}
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onBack}
+          className="text-slate-300 hover:text-white hover:bg-slate-700/50 px-3 py-1.5 h-8"
+        >
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Back
+        </Button>
 
-        {/* Right side buttons */}
+        {/* Right - Action buttons */}
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
             size="sm"
             onClick={() => setAutoCompileEnabled(!autoCompileEnabled)}
-            className={`border-slate-600 text-slate-300 hover:bg-slate-700 px-3 ${
-              autoCompileEnabled ? 'bg-slate-700' : ''
+            className={`border-slate-600 text-slate-300 hover:bg-slate-700/50 px-3 py-1.5 h-8 text-xs ${
+              autoCompileEnabled ? 'bg-slate-700/50' : ''
             }`}
           >
-            <Zap className="w-4 h-4 mr-2" />
+            <Zap className="w-3 h-3 mr-1.5" />
             Auto-compile
           </Button>
           
@@ -207,111 +172,106 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
             size="sm"
             onClick={handleCompile}
             disabled={isCompiling}
-            className="border-slate-600 text-slate-300 hover:bg-slate-700 px-3"
+            className="border-slate-600 text-slate-300 hover:bg-slate-700/50 px-3 py-1.5 h-8 text-xs"
           >
-            <Zap className="w-4 h-4 mr-2" />
-            {isCompiling ? "Compiling..." : "Compile"}
+            <Zap className="w-3 h-3 mr-1.5" />
+            Compile
           </Button>
           
           <Button
             variant="outline"
             size="sm"
             onClick={handleDownloadTeX}
-            className="border-slate-600 text-slate-300 hover:bg-slate-700 px-3"
+            className="border-slate-600 text-slate-300 hover:bg-slate-700/50 px-3 py-1.5 h-8 text-xs"
           >
-            <FileText className="w-4 h-4 mr-2" />
+            <FileText className="w-3 h-3 mr-1.5" />
             .tex
           </Button>
           
           <Button
             size="sm"
             onClick={handleDownloadPDF}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-3"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 h-8 text-xs"
           >
-            <Download className="w-4 h-4 mr-2" />
+            <Download className="w-3 h-3 mr-1.5" />
             PDF
           </Button>
         </div>
       </div>
 
+      {/* Main Content - Three panels exactly like the image */}
       <div className="flex h-[calc(100vh-56px)] relative">
         {/* Left Sidebar - Templates */}
-        <AnimatePresence>
-          {(sidebarOpen || window.innerWidth >= 1024) && (
-            <motion.div
-              initial={{ x: -300, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: -300, opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className={`${
-                sidebarOpen ? 'fixed inset-y-0 z-50 lg:relative' : 'hidden lg:block'
-              } w-80 bg-slate-800/90 backdrop-blur border-r border-slate-700 overflow-y-auto`}
-            >
-              {sidebarOpen && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="lg:hidden fixed inset-0 bg-black/50 -z-10"
-                  onClick={() => setSidebarOpen(false)}
-                />
-              )}
-              
-              <div className="p-4">
-                <TemplateSelector
-                  selectedTemplate={selectedTemplate}
-                  onTemplateSelect={setSelectedTemplate}
-                  onTemplateLoad={setLatexCode}
-                />
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <div className="w-80 bg-slate-800/80 backdrop-blur-sm border-r border-slate-700/50 overflow-y-auto">
+          <div className="p-4">
+            <div className="mb-4">
+              <h2 className="text-xl font-bold text-cyan-400 mb-2">Cosmic Portfolio Templates</h2>
+              <p className="text-slate-400 text-sm">Choose from our collection of stellar templates, each crafted with unique design elements for different dimensions of professional excellence</p>
+            </div>
+            <TemplateSelector
+              selectedTemplate={selectedTemplate}
+              onTemplateSelect={setSelectedTemplate}
+              onTemplateLoad={setLatexCode}
+            />
+          </div>
+        </div>
 
-        {/* Main Content - Split Editor and Preview */}
-        <div className="flex-1 flex">
-          {/* LaTeX Editor */}
-          <div className="flex-1 border-r border-slate-700">
-            <div className="h-full bg-slate-900">
-              <div className="border-b border-slate-700 px-4 py-2 bg-slate-800">
-                <div className="flex items-center gap-2">
-                  <FileText className="w-4 h-4 text-slate-400" />
-                  <span className="text-sm text-slate-300">main.tex</span>
-                </div>
-              </div>
-              <div className="h-[calc(100%-49px)]">
-                <LaTeXEditor
-                  code={latexCode}
-                  onChange={handleLatexChange}
-                />
-              </div>
+        {/* Center - LaTeX Editor */}
+        <div className="flex-1 border-r border-slate-700/50">
+          <div className="h-full bg-slate-900/50">
+            {/* Editor Tab */}
+            <div className="bg-slate-800/80 border-b border-slate-700/50 px-4 py-2 flex items-center gap-2">
+              <FileText className="w-4 h-4 text-cyan-400" />
+              <span className="text-sm text-slate-300 font-medium">main.tex</span>
+            </div>
+            {/* Editor Content */}
+            <div className="h-[calc(100%-41px)]">
+              <LaTeXEditor
+                code={latexCode}
+                onChange={handleLatexChange}
+              />
             </div>
           </div>
+        </div>
 
-          {/* PDF Preview */}
-          <div className="flex-1">
-            <div className="h-full bg-slate-900">
-              <div className="border-b border-slate-700 px-4 py-2 bg-slate-800">
-                <div className="flex items-center gap-2">
-                  <Eye className="w-4 h-4 text-slate-400" />
-                  <span className="text-sm text-slate-300">Preview</span>
-                  {isCompiling && (
-                    <motion.div
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                    >
-                      <Zap className="w-4 h-4 text-yellow-400" />
-                    </motion.div>
-                  )}
-                </div>
+        {/* Right - PDF Preview */}
+        <div className="flex-1">
+          <div className="h-full bg-slate-900/50">
+            {/* Preview Tab */}
+            <div className="bg-slate-800/80 border-b border-slate-700/50 px-4 py-2 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Eye className="w-4 h-4 text-cyan-400" />
+                <span className="text-sm text-slate-300 font-medium">Preview</span>
+                {isCompiling && (
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                  >
+                    <Zap className="w-4 h-4 text-yellow-400" />
+                  </motion.div>
+                )}
               </div>
-              <div className="h-[calc(100%-49px)]">
-                <PDFPreview
-                  pdfUrl={pdfUrl}
-                  isCompiling={isCompiling}
-                  fullscreen
-                />
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 bg-cyan-400 rounded-full"></div>
+                <span className="text-xs text-slate-400">Portfolio Preview</span>
+                <span className="text-xs text-slate-500">Compiled from LaTeX</span>
+                <Button
+                  size="sm"
+                  onClick={handleDownloadPDF}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 h-6 text-xs ml-2"
+                >
+                  <Download className="w-3 h-3 mr-1" />
+                  Download
+                </Button>
               </div>
+            </div>
+            {/* Preview Content */}
+            <div className="h-[calc(100%-41px)]">
+              <PDFPreview
+                pdfUrl={pdfUrl}
+                isCompiling={isCompiling}
+                fullscreen
+              />
             </div>
           </div>
         </div>
