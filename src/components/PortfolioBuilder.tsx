@@ -85,7 +85,7 @@ Passionate Software Developer with a strong foundation in full stack development
 \\textbf{Muse Streaming Music Platform} \\hfill Live Demo | Github
 \\begin{itemize}
     \\item Developed a full-stack music streaming platform featuring secure user authentication, real-time chat functionality, and an administrative dashboard for content management.
-    \\item Scaled to support 1000+ concurrent users, ensuring seamless music playback and real-time communication.
+    \\item Scaled to support 1000+ concurrent users, ensuring seamless music playbook and real-time communication.
     \\item Technologies: React, Node.js, Express.js, MongoDB, Socket.io, Clerk
 \\end{itemize}
 
@@ -184,22 +184,71 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Space Background */}
+      <div className="fixed inset-0 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+        {/* Animated gradient overlay */}
+        <motion.div
+          className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-purple-500/10 to-pink-500/10"
+          animate={{
+            background: [
+              "linear-gradient(45deg, rgba(6,182,212,0.1), rgba(168,85,247,0.1), rgba(236,72,153,0.1))",
+              "linear-gradient(45deg, rgba(236,72,153,0.1), rgba(6,182,212,0.1), rgba(168,85,247,0.1))",
+              "linear-gradient(45deg, rgba(168,85,247,0.1), rgba(236,72,153,0.1), rgba(6,182,212,0.1))",
+            ],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+        
+        {/* Floating orbs */}
+        <motion.div
+          className="absolute top-20 left-20 w-64 h-64 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 rounded-full blur-3xl"
+          animate={{
+            x: [0, 100, 0],
+            y: [0, -50, 0],
+            scale: [1, 1.2, 1],
+          }}
+          transition={{
+            duration: 12,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+        
+        <motion.div
+          className="absolute bottom-20 right-20 w-80 h-80 bg-gradient-to-r from-pink-500/20 to-cyan-500/20 rounded-full blur-3xl"
+          animate={{
+            x: [0, -80, 0],
+            y: [0, 60, 0],
+            scale: [1.2, 1, 1.2],
+          }}
+          transition={{
+            duration: 15,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+      </div>
+
       {/* Top Header Bar */}
-      <div className="bg-white border-b border-gray-200 h-14 flex items-center justify-between px-4">
+      <div className="relative z-10 bg-black/20 backdrop-blur-md border-b border-white/10 h-14 flex items-center justify-between px-4">
         {/* Left - Back button */}
         <Button
           variant="ghost"
           size="sm"
           onClick={onBack}
-          className="text-gray-700 hover:text-gray-900 hover:bg-gray-100 px-3 py-1.5 h-8"
+          className="text-white/90 hover:text-white hover:bg-white/10 px-3 py-1.5 h-8 backdrop-blur-sm"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
           Menu
         </Button>
 
         {/* Center - Title */}
-        <div className="text-gray-800 font-medium">
+        <div className="text-white/90 font-medium">
           RenderCV EngineeringResumes Theme
         </div>
 
@@ -209,8 +258,8 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
             variant="outline"
             size="sm"
             onClick={() => setAutoCompileEnabled(!autoCompileEnabled)}
-            className={`border-gray-300 text-gray-700 hover:bg-gray-100 px-3 py-1.5 h-8 text-xs ${
-              autoCompileEnabled ? 'bg-gray-100' : ''
+            className={`border-white/20 text-white/90 hover:bg-white/10 px-3 py-1.5 h-8 text-xs backdrop-blur-sm ${
+              autoCompileEnabled ? 'bg-white/10' : 'bg-transparent'
             }`}
           >
             Auto-compile
@@ -220,7 +269,7 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
             size="sm"
             onClick={handleCompile}
             disabled={isCompiling}
-            className="bg-green-500 hover:bg-green-600 text-white px-3 py-1.5 h-8 text-xs"
+            className="bg-green-500/80 hover:bg-green-500 text-white px-3 py-1.5 h-8 text-xs backdrop-blur-sm glow-effect"
           >
             <Play className="w-3 h-3 mr-1.5" />
             Recompile
@@ -229,7 +278,7 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
           <Button
             variant="outline"
             size="sm"
-            className="border-gray-300 text-gray-700 hover:bg-gray-100 px-2 py-1.5 h-8"
+            className="border-white/20 text-white/90 hover:bg-white/10 px-2 py-1.5 h-8 backdrop-blur-sm"
           >
             Review
           </Button>
@@ -237,7 +286,7 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
           <Button
             variant="outline"
             size="sm"
-            className="border-gray-300 text-gray-700 hover:bg-gray-100 px-2 py-1.5 h-8"
+            className="border-white/20 text-white/90 hover:bg-white/10 px-2 py-1.5 h-8 backdrop-blur-sm"
           >
             Share
           </Button>
@@ -245,7 +294,7 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
           <Button
             variant="outline"
             size="sm"
-            className="border-gray-300 text-gray-700 hover:bg-gray-100 px-2 py-1.5 h-8"
+            className="border-white/20 text-white/90 hover:bg-white/10 px-2 py-1.5 h-8 backdrop-blur-sm"
           >
             Submit
           </Button>
@@ -253,7 +302,7 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
           <Button
             variant="outline"
             size="sm"
-            className="border-gray-300 text-gray-700 hover:bg-gray-100 px-2 py-1.5 h-8"
+            className="border-white/20 text-white/90 hover:bg-white/10 px-2 py-1.5 h-8 backdrop-blur-sm"
           >
             History
           </Button>
@@ -261,50 +310,52 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
       </div>
 
       {/* Main Content - Three panels */}
-      <div className="flex h-[calc(100vh-56px)]">
+      <div className="relative z-10 flex h-[calc(100vh-56px)]">
         {/* Left Sidebar - File outline */}
-        <div className="w-60 bg-gray-50 border-r border-gray-200">
+        <div className="w-60 bg-black/20 backdrop-blur-md border-r border-white/10">
           <div className="p-4">
-            <h3 className="text-sm font-medium text-gray-800 mb-3">File outline</h3>
+            <h3 className="text-sm font-medium text-white/90 mb-3">File outline</h3>
             <div className="space-y-1">
               {sections.map((section) => (
-                <div
+                <motion.div
                   key={section}
                   onClick={() => setSelectedSection(section)}
-                  className={`px-3 py-2 text-sm cursor-pointer rounded transition-colors ${
+                  className={`px-3 py-2 text-sm cursor-pointer rounded transition-all duration-300 ${
                     selectedSection === section
-                      ? 'bg-gray-200 text-gray-900'
-                      : 'text-gray-700 hover:bg-gray-100'
+                      ? 'bg-white/20 text-white backdrop-blur-sm glow-effect'
+                      : 'text-white/70 hover:bg-white/10 hover:text-white/90'
                   }`}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                 >
                   {section}
-                </div>
+                </motion.div>
               ))}
             </div>
           </div>
         </div>
 
         {/* Center - LaTeX Editor */}
-        <div className="flex-1 border-r border-gray-200">
-          <div className="h-full bg-white">
+        <div className="flex-1 border-r border-white/10">
+          <div className="h-full bg-black/20 backdrop-blur-md">
             {/* Editor Tabs */}
-            <div className="bg-gray-100 border-b border-gray-200 px-4 py-0 flex items-center">
-              <div className="bg-white border-t border-l border-r border-gray-200 px-4 py-2 text-sm font-medium text-gray-800 rounded-t-lg">
+            <div className="bg-black/30 backdrop-blur-md border-b border-white/10 px-4 py-0 flex items-center">
+              <div className="bg-white/10 backdrop-blur-sm border-t border-l border-r border-white/20 px-4 py-2 text-sm font-medium text-white/90 rounded-t-lg">
                 main.tex
               </div>
             </div>
             
             {/* Editor Toolbar */}
-            <div className="bg-white border-b border-gray-200 px-4 py-2 flex items-center justify-between">
+            <div className="bg-black/20 backdrop-blur-md border-b border-white/10 px-4 py-2 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-600">Code Editor</span>
+                <span className="text-sm text-white/70">Code Editor</span>
               </div>
               <div className="flex items-center gap-2">
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={handleCopy}
-                  className="text-gray-600 hover:text-gray-800 hover:bg-gray-100 p-2 h-8 w-8"
+                  className="text-white/70 hover:text-white hover:bg-white/10 p-2 h-8 w-8 backdrop-blur-sm"
                 >
                   <Copy className="w-4 h-4" />
                 </Button>
@@ -312,7 +363,7 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
                   variant="ghost"
                   size="sm"
                   onClick={handleReset}
-                  className="text-gray-600 hover:text-gray-800 hover:bg-gray-100 p-2 h-8 w-8"
+                  className="text-white/70 hover:text-white hover:bg-white/10 p-2 h-8 w-8 backdrop-blur-sm"
                 >
                   <RotateCcw className="w-4 h-4" />
                 </Button>
@@ -331,27 +382,27 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
 
         {/* Right - PDF Preview */}
         <div className="flex-1">
-          <div className="h-full bg-white">
+          <div className="h-full bg-black/20 backdrop-blur-md">
             {/* Preview Header */}
-            <div className="bg-white border-b border-gray-200 px-4 py-2 flex items-center justify-between">
+            <div className="bg-black/20 backdrop-blur-md border-b border-white/10 px-4 py-2 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Eye className="w-4 h-4 text-gray-600" />
-                <span className="text-sm text-gray-800 font-medium">Portfolio Preview</span>
-                <span className="text-xs text-gray-500">Compiled from LaTeX</span>
+                <Eye className="w-4 h-4 text-white/70" />
+                <span className="text-sm text-white/90 font-medium">Portfolio Preview</span>
+                <span className="text-xs text-white/60">Compiled from LaTeX</span>
               </div>
               <div className="flex items-center gap-2">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={handleDownloadTeX}
-                  className="border-gray-300 text-gray-700 hover:bg-gray-100 px-3 py-1.5 h-7 text-xs"
+                  className="border-white/20 text-white/90 hover:bg-white/10 px-3 py-1.5 h-7 text-xs backdrop-blur-sm"
                 >
                   .tex
                 </Button>
                 <Button
                   size="sm"
                   onClick={handleDownloadPDF}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 h-7 text-xs"
+                  className="bg-blue-600/80 hover:bg-blue-600 text-white px-3 py-1.5 h-7 text-xs backdrop-blur-sm glow-effect"
                 >
                   PDF
                 </Button>
@@ -359,7 +410,7 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
                   variant="ghost"
                   size="sm"
                   onClick={handleDownloadPDF}
-                  className="text-gray-600 hover:text-gray-800 hover:bg-gray-100 p-1.5 h-7 w-7"
+                  className="text-white/70 hover:text-white hover:bg-white/10 p-1.5 h-7 w-7 backdrop-blur-sm"
                 >
                   <Download className="w-4 h-4" />
                 </Button>

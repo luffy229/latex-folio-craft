@@ -14,10 +14,10 @@ const PDFPreview = ({ pdfUrl, isCompiling, fullscreen = false }: PDFPreviewProps
 
   if (isCompiling) {
     return (
-      <div className={`${height} flex items-center justify-center bg-white`}>
+      <div className={`${height} flex items-center justify-center bg-black/30 backdrop-blur-md`}>
         <div className="text-center">
-          <Loader2 className="w-8 h-8 text-gray-500 animate-spin mx-auto mb-4" />
-          <p className="text-gray-600 text-sm">Compiling LaTeX...</p>
+          <Loader2 className="w-8 h-8 text-cyan-400 animate-spin mx-auto mb-4" />
+          <p className="text-white/70 text-sm">Compiling LaTeX...</p>
         </div>
       </div>
     );
@@ -25,21 +25,26 @@ const PDFPreview = ({ pdfUrl, isCompiling, fullscreen = false }: PDFPreviewProps
 
   if (!pdfUrl) {
     return (
-      <div className={`${height} flex items-center justify-center bg-white`}>
+      <div className={`${height} flex items-center justify-center bg-black/30 backdrop-blur-md`}>
         <div className="text-center">
-          <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-600 mb-2">No PDF Available</h3>
-          <p className="text-gray-500 text-sm">Click "Recompile" to generate PDF</p>
+          <FileText className="w-12 h-12 text-white/40 mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-white/80 mb-2">No PDF Available</h3>
+          <p className="text-white/60 text-sm">Click "Recompile" to generate PDF</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className={`${height} bg-white overflow-auto p-6`}>
+    <div className={`${height} bg-black/30 backdrop-blur-md overflow-auto p-6`}>
       <div className="max-w-2xl mx-auto">
-        {/* Simulated PDF Content with exact styling from image */}
-        <div className="bg-white rounded-lg shadow-md p-8 border border-gray-200">
+        {/* Simulated PDF Content with space theme styling */}
+        <motion.div 
+          className="bg-white/95 backdrop-blur-sm rounded-lg shadow-2xl p-8 border border-white/20 glow-effect"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+        >
           <div className="text-center mb-6">
             <h1 className="text-2xl font-bold text-gray-900 mb-1">Pratik A Pal</h1>
             <div className="text-sm text-gray-600">
@@ -134,7 +139,7 @@ const PDFPreview = ({ pdfUrl, isCompiling, fullscreen = false }: PDFPreviewProps
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );
