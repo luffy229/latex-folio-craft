@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, Download, Eye, FileText, Zap, Rocket } from "lucide-react";
+import { ArrowLeft, Download, Eye, FileText, Zap, Rocket, Menu, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import LaTeXEditor from "./LaTeXEditor";
 import PDFPreview from "./PDFPreview";
@@ -83,26 +83,24 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
   const [isCompiling, setIsCompiling] = useState(false);
   const [pdfUrl, setPdfUrl] = useState("");
   const [autoCompileEnabled, setAutoCompileEnabled] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
-    // Simulate initial loading
     const timer = setTimeout(() => {
       setIsLoading(false);
-      // Auto-compile the default template on load
       handleCompile();
     }, 2000);
 
     return () => clearTimeout(timer);
   }, []);
 
-  // Auto-compile when code changes (with debounce)
   useEffect(() => {
     if (!autoCompileEnabled || !latexCode.trim()) return;
     
     const timer = setTimeout(() => {
       handleCompile();
-    }, 1000); // 1 second debounce
+    }, 1000);
 
     return () => clearTimeout(timer);
   }, [latexCode, autoCompileEnabled]);
@@ -112,7 +110,6 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
     
     setIsCompiling(true);
     
-    // Simulate LaTeX compilation
     setTimeout(() => {
       setPdfUrl(`data:application/pdf;base64,${btoa("Mock PDF content")}`);
       setIsCompiling(false);
@@ -165,213 +162,218 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
   }
 
   return (
-    <div className="min-h-screen relative">
+    <div className="min-h-screen relative overflow-hidden">
       <SpaceBackground />
       
-      {/* Header - Fully Responsive */}
+      {/* Top Header Bar */}
       <motion.div
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.6 }}
-        className="relative z-10 border-b border-slate-700/50 bg-slate-900/80 backdrop-blur-xl sticky top-0"
+        className="relative z-10 bg-slate-900/95 backdrop-blur-xl border-b border-slate-700/50 sticky top-0"
       >
-        <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
-            <div className="flex items-center gap-2 sm:gap-4 w-full sm:w-auto">
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={onBack}
-                  className="flex items-center gap-1 sm:gap-2 text-cyan-300 hover:text-cyan-200 hover:bg-cyan-500/10 text-xs sm:text-sm"
-                >
-                  <ArrowLeft className="w-3 h-3 sm:w-4 sm:h-4" />
-                  <span className="hidden xs:inline">Back to</span> Cosmos
-                </Button>
-              </motion.div>
-              <div className="h-4 sm:h-6 w-px bg-slate-600" />
-              <h1 className="text-sm sm:text-xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
-                Cosmic Portfolio Builder
-              </h1>
-            </div>
+        <div className="flex items-center justify-between px-4 py-3">
+          {/* Left side - Menu and Title */}
+          <div className="flex items-center gap-4">
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                className="lg:hidden text-cyan-300 hover:text-cyan-200 hover:bg-cyan-500/10"
+              >
+                {sidebarOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+              </Button>
+            </motion.div>
             
-            {/* Action Buttons - Responsive Grid */}
-            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 w-full sm:w-auto justify-end">
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    setAutoCompileEnabled(!autoCompileEnabled);
-                    toast({
-                      title: autoCompileEnabled ? "Auto-compile Disabled" : "Auto-compile Enabled",
-                      description: autoCompileEnabled 
-                        ? "Manual compilation required" 
-                        : "Changes will auto-compile",
-                    });
-                  }}
-                  className={`flex items-center gap-1 sm:gap-2 border-slate-500/50 text-slate-300 hover:bg-slate-500/10 text-xs sm:text-sm px-2 sm:px-3 ${
-                    autoCompileEnabled ? 'bg-green-500/20 border-green-500/50 text-green-300' : ''
-                  }`}
-                >
-                  <Zap className="w-3 h-3 sm:w-4 sm:h-4" />
-                  <span className="hidden sm:inline">Auto-compile</span>
-                  <span className="sm:hidden">{autoCompileEnabled ? 'ON' : 'OFF'}</span>
-                </Button>
-              </motion.div>
-              
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleCompile}
-                  disabled={isCompiling}
-                  className="flex items-center gap-1 sm:gap-2 border-cyan-500/50 text-cyan-300 hover:bg-cyan-500/10 text-xs sm:text-sm px-2 sm:px-3"
-                >
-                  <Zap className="w-3 h-3 sm:w-4 sm:h-4" />
-                  <span className="hidden sm:inline">{isCompiling ? "Compiling..." : "Compile"}</span>
-                  <span className="sm:hidden">⚡</span>
-                </Button>
-              </motion.div>
-              
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleDownloadTeX}
-                  className="flex items-center gap-1 sm:gap-2 border-purple-500/50 text-purple-300 hover:bg-purple-500/10 text-xs sm:text-sm px-2 sm:px-3"
-                >
-                  <FileText className="w-3 h-3 sm:w-4 sm:h-4" />
-                  <span className="hidden sm:inline">.tex</span>
-                  <span className="sm:hidden">📄</span>
-                </Button>
-              </motion.div>
-              
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button
-                  size="sm"
-                  onClick={handleDownloadPDF}
-                  className="flex items-center gap-1 sm:gap-2 bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-400 hover:to-purple-400 text-white text-xs sm:text-sm px-2 sm:px-3"
-                >
-                  <Download className="w-3 h-3 sm:w-4 sm:h-4" />
-                  <span className="hidden sm:inline">PDF</span>
-                  <span className="sm:hidden">📥</span>
-                </Button>
-              </motion.div>
-            </div>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onBack}
+                className="text-cyan-300 hover:text-cyan-200 hover:bg-cyan-500/10"
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back to Cosmos
+              </Button>
+            </motion.div>
+            
+            <div className="h-6 w-px bg-slate-600" />
+            
+            <h1 className="text-xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+              Cosmic Portfolio Builder
+            </h1>
+          </div>
+
+          {/* Right side - Actions */}
+          <div className="flex items-center gap-2">
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setAutoCompileEnabled(!autoCompileEnabled);
+                  toast({
+                    title: autoCompileEnabled ? "Auto-compile Disabled" : "Auto-compile Enabled",
+                    description: autoCompileEnabled 
+                      ? "Manual compilation required" 
+                      : "Changes will auto-compile",
+                  });
+                }}
+                className={`border-slate-500/50 text-slate-300 hover:bg-slate-500/10 ${
+                  autoCompileEnabled ? 'bg-green-500/20 border-green-500/50 text-green-300' : ''
+                }`}
+              >
+                <Zap className="w-4 h-4 mr-2" />
+                Auto-compile
+              </Button>
+            </motion.div>
+            
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleCompile}
+                disabled={isCompiling}
+                className="border-cyan-500/50 text-cyan-300 hover:bg-cyan-500/10"
+              >
+                <Zap className="w-4 h-4 mr-2" />
+                {isCompiling ? "Compiling..." : "Compile"}
+              </Button>
+            </motion.div>
+            
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleDownloadTeX}
+                className="border-purple-500/50 text-purple-300 hover:bg-purple-500/10"
+              >
+                <FileText className="w-4 h-4 mr-2" />
+                .tex
+              </Button>
+            </motion.div>
+            
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Button
+                size="sm"
+                onClick={handleDownloadPDF}
+                className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-400 hover:to-purple-400 text-white"
+              >
+                <Download className="w-4 h-4 mr-2" />
+                PDF
+              </Button>
+            </motion.div>
           </div>
         </div>
       </motion.div>
 
-      {/* Main Content - Responsive */}
-      <div className="relative z-10 container mx-auto px-3 sm:px-4 py-4 sm:py-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
-          <Tabs defaultValue="editor" className="space-y-4 sm:space-y-6">
-            <TabsList className="grid w-full grid-cols-3 bg-slate-900/50 backdrop-blur-sm border border-slate-700/50 h-10 sm:h-auto">
-              <TabsTrigger 
-                value="templates" 
-                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500/20 data-[state=active]:to-purple-500/20 text-xs sm:text-sm py-2"
-              >
-                Templates
-              </TabsTrigger>
-              <TabsTrigger 
-                value="editor" 
-                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500/20 data-[state=active]:to-purple-500/20 text-xs sm:text-sm py-2"
-              >
-                Editor
-              </TabsTrigger>
-              <TabsTrigger 
-                value="preview" 
-                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500/20 data-[state=active]:to-purple-500/20 text-xs sm:text-sm py-2"
-              >
-                Preview
-              </TabsTrigger>
-            </TabsList>
-
-            <AnimatePresence mode="wait">
-              <TabsContent value="templates">
+      <div className="flex h-[calc(100vh-73px)] relative">
+        {/* Left Sidebar - Templates (Mobile Overlay + Desktop Sidebar) */}
+        <AnimatePresence>
+          {(sidebarOpen || window.innerWidth >= 1024) && (
+            <motion.div
+              initial={{ x: -320, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: -320, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className={`${
+                sidebarOpen ? 'fixed inset-y-0 z-50 lg:relative' : 'hidden lg:block'
+              } w-80 bg-slate-900/95 backdrop-blur-xl border-r border-slate-700/50 overflow-y-auto`}
+            >
+              {/* Mobile Overlay Background */}
+              {sidebarOpen && (
                 <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 20 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <TemplateSelector
-                    selectedTemplate={selectedTemplate}
-                    onTemplateSelect={setSelectedTemplate}
-                    onTemplateLoad={setLatexCode}
-                  />
-                </motion.div>
-              </TabsContent>
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="lg:hidden fixed inset-0 bg-black/50 -z-10"
+                  onClick={() => setSidebarOpen(false)}
+                />
+              )}
+              
+              <div className="p-4">
+                <div className="flex items-center justify-between mb-6 lg:hidden">
+                  <h2 className="text-lg font-semibold text-cyan-300">Templates</h2>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setSidebarOpen(false)}
+                    className="text-slate-400 hover:text-slate-200"
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
+                
+                <TemplateSelector
+                  selectedTemplate={selectedTemplate}
+                  onTemplateSelect={setSelectedTemplate}
+                  onTemplateLoad={setLatexCode}
+                />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-              <TabsContent value="editor">
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 20 }}
-                  transition={{ duration: 0.3 }}
-                  className="grid lg:grid-cols-2 gap-4 sm:gap-6 h-[70vh] sm:h-[80vh]"
-                >
-                  <Card className="flex flex-col bg-slate-900/40 backdrop-blur-sm border border-slate-700/50">
-                    <CardHeader className="pb-2 px-3 sm:px-6 py-3 sm:py-6">
-                      <CardTitle className="flex items-center gap-2 text-cyan-300 text-sm sm:text-base">
-                        <Rocket className="w-4 h-4 sm:w-5 sm:h-5" />
-                        LaTeX Editor
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="flex-1 p-0">
-                      <LaTeXEditor
-                        code={latexCode}
-                        onChange={handleLatexChange}
-                      />
-                    </CardContent>
-                  </Card>
+        {/* Main Content Area - Split Editor and Preview */}
+        <div className="flex-1 flex overflow-hidden">
+          {/* LaTeX Editor */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="flex-1 border-r border-slate-700/50"
+          >
+            <Card className="h-full bg-slate-900/40 backdrop-blur-sm border-0 rounded-none">
+              <CardHeader className="pb-2 border-b border-slate-700/50">
+                <CardTitle className="flex items-center gap-2 text-cyan-300">
+                  <Rocket className="w-5 h-5" />
+                  LaTeX Editor
+                  <span className="text-xs text-slate-400 ml-auto">main.tex</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-0 h-[calc(100%-73px)]">
+                <LaTeXEditor
+                  code={latexCode}
+                  onChange={handleLatexChange}
+                />
+              </CardContent>
+            </Card>
+          </motion.div>
 
-                  <Card className="flex flex-col bg-slate-900/40 backdrop-blur-sm border border-slate-700/50">
-                    <CardHeader className="pb-2 px-3 sm:px-6 py-3 sm:py-6">
-                      <CardTitle className="flex items-center gap-2 text-purple-300 text-sm sm:text-base">
-                        <Eye className="w-4 h-4 sm:w-5 sm:h-5" />
-                        Live Preview
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="flex-1 p-0">
-                      <PDFPreview
-                        pdfUrl={pdfUrl}
-                        isCompiling={isCompiling}
-                      />
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              </TabsContent>
-
-              <TabsContent value="preview">
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 20 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <Card className="bg-slate-900/40 backdrop-blur-sm border border-slate-700/50">
-                    <CardHeader className="px-3 sm:px-6 py-3 sm:py-6">
-                      <CardTitle className="text-cyan-300 text-sm sm:text-base">Portfolio Preview</CardTitle>
-                    </CardHeader>
-                    <CardContent className="p-0">
-                      <PDFPreview
-                        pdfUrl={pdfUrl}
-                        isCompiling={isCompiling}
-                        fullscreen
-                      />
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              </TabsContent>
-            </AnimatePresence>
-          </Tabs>
-        </motion.div>
+          {/* PDF Preview */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="flex-1"
+          >
+            <Card className="h-full bg-slate-900/40 backdrop-blur-sm border-0 rounded-none">
+              <CardHeader className="pb-2 border-b border-slate-700/50">
+                <CardTitle className="flex items-center gap-2 text-purple-300">
+                  <Eye className="w-5 h-5" />
+                  Live Preview
+                  {isCompiling && (
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                      className="ml-auto"
+                    >
+                      <Zap className="w-4 h-4 text-yellow-400" />
+                    </motion.div>
+                  )}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-0 h-[calc(100%-73px)]">
+                <PDFPreview
+                  pdfUrl={pdfUrl}
+                  isCompiling={isCompiling}
+                  fullscreen
+                />
+              </CardContent>
+            </Card>
+          </motion.div>
+        </div>
       </div>
     </div>
   );
