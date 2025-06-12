@@ -2,12 +2,15 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Menu, X, User, FileText, Rocket } from "lucide-react";
+import { Menu, X, User, FileText, Rocket, LogOut, Settings } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 import MagneticCursor from "@/components/MagneticCursor";
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const { user, signOut, isAuthenticated } = useAuth();
 
   const navItems = [
     { name: "Templates", href: "#templates" },
@@ -71,27 +74,76 @@ const Navigation = () => {
               ))}
             </div>
 
-            {/* Desktop Auth Buttons */}
+            {/* Desktop Auth Section */}
             <div className="hidden md:flex items-center space-x-4">
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Link to="/login">
-                  <Button
-                    variant="ghost"
-                    className="text-slate-300 hover:text-white hover:bg-slate-800/50 border border-slate-600/50 hover:border-slate-500 interactive"
+              {isAuthenticated ? (
+                <div className="relative">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setShowUserMenu(!showUserMenu)}
+                    className="flex items-center space-x-3 text-slate-300 hover:text-white transition-colors interactive bg-slate-800/50 border border-slate-600/50 hover:border-slate-500 rounded-lg px-3 py-2"
                   >
-                    <User className="w-4 h-4 mr-2" />
-                    Login
-                  </Button>
-                </Link>
-              </motion.div>
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Link to="/signup">
-                  <Button className="bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white border-0 shadow-lg interactive">
-                    <FileText className="w-4 h-4 mr-2" />
-                    Sign Up
-                  </Button>
-                </Link>
-              </motion.div>
+                    <img
+                      src={user?.avatar}
+                      alt={user?.name}
+                      className="w-8 h-8 rounded-full"
+                    />
+                    <span className="font-medium">{user?.name}</span>
+                  </motion.button>
+                  
+                  <AnimatePresence>
+                    {showUserMenu && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                        transition={{ duration: 0.2 }}
+                        className="absolute right-0 mt-2 w-48 bg-slate-800/90 backdrop-blur-xl border border-slate-600/50 rounded-lg shadow-lg"
+                      >
+                        <div className="py-2">
+                          <div className="px-4 py-2 border-b border-slate-600/50">
+                            <p className="text-sm text-slate-300">{user?.email}</p>
+                          </div>
+                          <Link to="/dashboard" className="flex items-center px-4 py-2 text-slate-300 hover:text-white hover:bg-slate-700/50 transition-colors interactive">
+                            <Settings className="w-4 h-4 mr-2" />
+                            Dashboard
+                          </Link>
+                          <button
+                            onClick={signOut}
+                            className="flex items-center w-full px-4 py-2 text-slate-300 hover:text-white hover:bg-slate-700/50 transition-colors interactive"
+                          >
+                            <LogOut className="w-4 h-4 mr-2" />
+                            Sign Out
+                          </button>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              ) : (
+                <>
+                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                    <Link to="/login">
+                      <Button
+                        variant="ghost"
+                        className="text-slate-300 hover:text-white hover:bg-slate-800/50 border border-slate-600/50 hover:border-slate-500 interactive"
+                      >
+                        <User className="w-4 h-4 mr-2" />
+                        Login
+                      </Button>
+                    </Link>
+                  </motion.div>
+                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                    <Link to="/signup">
+                      <Button className="bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white border-0 shadow-lg interactive">
+                        <FileText className="w-4 h-4 mr-2" />
+                        Sign Up
+                      </Button>
+                    </Link>
+                  </motion.div>
+                </>
+              )}
             </div>
 
             {/* Mobile Menu Button */}
@@ -143,22 +195,61 @@ const Navigation = () => {
                       )}
                     </motion.div>
                   ))}
+                  
                   <div className="pt-4 space-y-3 border-t border-slate-700/50">
-                    <Link to="/login" onClick={() => setIsOpen(false)}>
-                      <Button
-                        variant="ghost"
-                        className="w-full justify-start text-slate-300 hover:text-white hover:bg-slate-800/50 border border-slate-600/50 interactive"
-                      >
-                        <User className="w-4 h-4 mr-2" />
-                        Login
-                      </Button>
-                    </Link>
-                    <Link to="/signup" onClick={() => setIsOpen(false)}>
-                      <Button className="w-full justify-start bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white interactive">
-                        <FileText className="w-4 h-4 mr-2" />
-                        Sign Up
-                      </Button>
-                    </Link>
+                    {isAuthenticated ? (
+                      <>
+                        <div className="flex items-center space-x-3 py-2">
+                          <img
+                            src={user?.avatar}
+                            alt={user?.name}
+                            className="w-8 h-8 rounded-full"
+                          />
+                          <div>
+                            <p className="text-slate-300 font-medium">{user?.name}</p>
+                            <p className="text-slate-400 text-sm">{user?.email}</p>
+                          </div>
+                        </div>
+                        <Link to="/dashboard" onClick={() => setIsOpen(false)}>
+                          <Button
+                            variant="ghost"
+                            className="w-full justify-start text-slate-300 hover:text-white hover:bg-slate-800/50 border border-slate-600/50 interactive"
+                          >
+                            <Settings className="w-4 h-4 mr-2" />
+                            Dashboard
+                          </Button>
+                        </Link>
+                        <Button
+                          onClick={() => {
+                            signOut();
+                            setIsOpen(false);
+                          }}
+                          variant="ghost"
+                          className="w-full justify-start text-slate-300 hover:text-white hover:bg-slate-800/50 border border-slate-600/50 interactive"
+                        >
+                          <LogOut className="w-4 h-4 mr-2" />
+                          Sign Out
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        <Link to="/login" onClick={() => setIsOpen(false)}>
+                          <Button
+                            variant="ghost"
+                            className="w-full justify-start text-slate-300 hover:text-white hover:bg-slate-800/50 border border-slate-600/50 interactive"
+                          >
+                            <User className="w-4 h-4 mr-2" />
+                            Login
+                          </Button>
+                        </Link>
+                        <Link to="/signup" onClick={() => setIsOpen(false)}>
+                          <Button className="w-full justify-start bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white interactive">
+                            <FileText className="w-4 h-4 mr-2" />
+                            Sign Up
+                          </Button>
+                        </Link>
+                      </>
+                    )}
                   </div>
                 </div>
               </motion.div>

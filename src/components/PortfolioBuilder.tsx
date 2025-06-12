@@ -5,6 +5,7 @@ import { ArrowLeft, Download, Eye, FileText, Copy, RotateCcw, Play } from "lucid
 import { useToast } from "@/hooks/use-toast";
 import LaTeXEditor from "./LaTeXEditor";
 import PDFPreview from "./PDFPreview";
+import MagneticCursor from "./MagneticCursor";
 
 interface PortfolioBuilderProps {
   onBack: () => void;
@@ -184,6 +185,8 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
+      <MagneticCursor />
+      
       {/* Enhanced Space Background with more dynamic elements */}
       <div className="fixed inset-0 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
         {/* Animated gradient overlay with more complexity */}
@@ -347,8 +350,8 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ delay: 0.1 * index, duration: 0.3 }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.02, x: 5 }}
+              whileTap={{ scale: 0.98 }}
             >
               <Button
                 variant={button.variant === "primary" ? "default" : "outline"}

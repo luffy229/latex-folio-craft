@@ -5,7 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Eye, EyeOff, Mail, Lock, User, ArrowLeft, Rocket } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 import SpaceBackground from "@/components/SpaceBackground";
 import FloatingElements from "@/components/FloatingElements";
 import MagneticCursor from "@/components/MagneticCursor";
@@ -14,20 +16,48 @@ import ParticleSystem from "@/components/ParticleSystem";
 const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
     confirmPassword: ""
   });
+  const { signIn } = useAuth();
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords don't match!");
+      toast({
+        title: "Password mismatch",
+        description: "Passwords don't match. Please try again.",
+        variant: "destructive",
+      });
       return;
     }
-    console.log("Signup attempt:", formData);
+    
+    setIsLoading(true);
+    
+    try {
+      // For demo purposes, automatically sign in after "signup"
+      await signIn(formData.email, formData.password);
+      toast({
+        title: "Account created!",
+        description: "Welcome to CosmicFolio! Your account has been created successfully.",
+      });
+      navigate("/dashboard");
+    } catch (error) {
+      toast({
+        title: "Sign up failed",
+        description: "Please try again later.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleChange = (field: string, value: string) => {
@@ -52,7 +82,7 @@ const Signup = () => {
         <Link to="/">
           <Button
             variant="ghost"
-            className="text-slate-300 hover:text-white hover:bg-slate-800/50 border border-slate-600/50 hover:border-slate-500 interactive"
+            className="text-slate-300 hover:text-white hover:bg-slate-800/50 border border-slate-600/50 hover:border-slate-505 interactive"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Home
@@ -175,9 +205,10 @@ const Signup = () => {
                 <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                   <Button
                     type="submit"
+                    disabled={isLoading}
                     className="w-full bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white shadow-lg interactive"
                   >
-                    Create Account
+                    {isLoading ? "Creating Account..." : "Create Account"}
                   </Button>
                 </motion.div>
               </form>
