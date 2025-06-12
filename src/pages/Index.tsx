@@ -12,6 +12,7 @@ import MagneticCursor from "@/components/MagneticCursor";
 import ScrollProgressBar from "@/components/ScrollProgressBar";
 import InteractiveText from "@/components/InteractiveText";
 import GlowingOrbs from "@/components/GlowingOrbs";
+import Navigation from "@/components/Navigation";
 import { useLenis } from "@/hooks/useLenis";
 import { useGSAP } from "@/hooks/useGSAP";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
@@ -91,11 +92,14 @@ const Index = () => {
       <MagneticCursor />
       <ScrollProgressBar />
       
+      {/* Navigation */}
+      <Navigation />
+      
       {/* Enhanced Hero Section */}
       <motion.div 
         ref={heroRef}
         style={{ y: heroY, opacity: heroOpacity, scale: textScale }}
-        className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 pt-16 sm:pt-24 lg:pt-32 pb-16 sm:pb-20 lg:pb-24"
+        className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-32 lg:pt-40 pb-16 sm:pb-20 lg:pb-24"
       >
         <motion.div
           variants={containerVariants}
