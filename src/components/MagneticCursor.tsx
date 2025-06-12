@@ -17,14 +17,14 @@ const MagneticCursor = () => {
 
     const handleMouseEnter = (e: Event) => {
       const target = e.target as HTMLElement;
-      if (target.matches('button, a, [role="button"], .interactive')) {
+      if (target && typeof target.matches === 'function' && target.matches('button, a, [role="button"], .interactive')) {
         setIsHovering(true);
       }
     };
 
     const handleMouseLeave = (e: Event) => {
       const target = e.target as HTMLElement;
-      if (target.matches('button, a, [role="button"], .interactive')) {
+      if (target && typeof target.matches === 'function' && target.matches('button, a, [role="button"], .interactive')) {
         setIsHovering(false);
       }
     };

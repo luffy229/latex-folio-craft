@@ -18,6 +18,8 @@ import { Link } from "react-router-dom";
 import SpaceBackground from "@/components/SpaceBackground";
 import FloatingElements from "@/components/FloatingElements";
 import Navigation from "@/components/Navigation";
+import MagneticCursor from "@/components/MagneticCursor";
+import ParticleSystem from "@/components/ParticleSystem";
 
 // Mock data for portfolios
 const mockPortfolios = [
@@ -72,6 +74,8 @@ const Dashboard = () => {
       {/* Background Effects */}
       <SpaceBackground />
       <FloatingElements />
+      <ParticleSystem />
+      <MagneticCursor />
       
       {/* Navigation */}
       <Navigation />
@@ -86,7 +90,7 @@ const Dashboard = () => {
             transition={{ duration: 0.8 }}
             className="text-center mb-12"
           >
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent text-glow">
               Your Cosmic Portfolios
             </h1>
             <p className="text-lg sm:text-xl text-slate-300 max-w-3xl mx-auto">
@@ -110,7 +114,7 @@ const Dashboard = () => {
                   placeholder="Search portfolios..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 pr-4 py-2 bg-slate-800/50 backdrop-blur-sm border border-slate-600/50 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-cyan-400 transition-colors w-full sm:w-64"
+                  className="pl-10 pr-4 py-2 bg-slate-800/50 backdrop-blur-sm border border-slate-600/50 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-cyan-400 transition-colors w-full sm:w-64 interactive"
                 />
               </div>
 
@@ -120,7 +124,7 @@ const Dashboard = () => {
                 <select
                   value={selectedTemplate}
                   onChange={(e) => setSelectedTemplate(e.target.value)}
-                  className="pl-10 pr-8 py-2 bg-slate-800/50 backdrop-blur-sm border border-slate-600/50 rounded-lg text-white focus:outline-none focus:border-cyan-400 transition-colors appearance-none cursor-pointer"
+                  className="pl-10 pr-8 py-2 bg-slate-800/50 backdrop-blur-sm border border-slate-600/50 rounded-lg text-white focus:outline-none focus:border-cyan-400 transition-colors appearance-none cursor-pointer interactive"
                 >
                   {templates.map(template => (
                     <option key={template} value={template} className="bg-slate-800">
@@ -134,7 +138,7 @@ const Dashboard = () => {
             {/* Create New Button */}
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Link to="/">
-                <Button className="bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white shadow-lg">
+                <Button className="bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white shadow-lg glow-effect interactive">
                   <Plus className="w-4 h-4 mr-2" />
                   Create New Portfolio
                 </Button>
@@ -155,10 +159,10 @@ const Dashboard = () => {
                 initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                whileHover={{ y: -5 }}
+                whileHover={{ y: -5, scale: 1.02 }}
                 className="group"
               >
-                <Card className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/40 hover:border-cyan-400/70 transition-all duration-500 overflow-hidden shadow-2xl">
+                <Card className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/40 hover:border-cyan-400/70 transition-all duration-500 overflow-hidden shadow-2xl glow-effect interactive">
                   {/* Preview Image */}
                   <div className="relative aspect-[3/4] bg-slate-800/50 overflow-hidden">
                     <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/20 to-purple-500/20 flex items-center justify-center">
@@ -170,13 +174,13 @@ const Dashboard = () => {
                       <div className="flex gap-2">
                         <motion.button
                           whileHover={{ scale: 1.1 }}
-                          className="p-2 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 transition-colors"
+                          className="p-2 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 transition-colors interactive"
                         >
                           <Eye className="w-4 h-4" />
                         </motion.button>
                         <motion.button
                           whileHover={{ scale: 1.1 }}
-                          className="p-2 bg-cyan-500/80 backdrop-blur-sm rounded-full text-white hover:bg-cyan-500 transition-colors"
+                          className="p-2 bg-cyan-500/80 backdrop-blur-sm rounded-full text-white hover:bg-cyan-500 transition-colors interactive"
                         >
                           <Edit3 className="w-4 h-4" />
                         </motion.button>
@@ -207,7 +211,7 @@ const Dashboard = () => {
                       <Button
                         variant="outline"
                         size="sm"
-                        className="flex-1 border-slate-600/50 text-slate-300 hover:bg-slate-800/50 hover:text-white"
+                        className="flex-1 border-slate-600/50 text-slate-300 hover:bg-slate-800/50 hover:text-white interactive"
                       >
                         <Download className="w-3 h-3 mr-1" />
                         PDF
@@ -215,7 +219,7 @@ const Dashboard = () => {
                       <Button
                         variant="outline"
                         size="sm"
-                        className="border-slate-600/50 text-slate-300 hover:bg-red-500/20 hover:border-red-500/50 hover:text-red-300"
+                        className="border-slate-600/50 text-slate-300 hover:bg-red-500/20 hover:border-red-500/50 hover:text-red-300 interactive"
                       >
                         <Trash2 className="w-3 h-3" />
                       </Button>
@@ -244,7 +248,7 @@ const Dashboard = () => {
                 }
               </p>
               <Link to="/">
-                <Button className="bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white">
+                <Button className="bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white glow-effect interactive">
                   <Plus className="w-4 h-4 mr-2" />
                   Create Your First Portfolio
                 </Button>
