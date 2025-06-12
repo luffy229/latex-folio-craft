@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -185,32 +184,18 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-      {/* Space Background */}
+      {/* Enhanced Space Background with more dynamic elements */}
       <div className="fixed inset-0 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-        {/* Animated gradient overlay */}
+        {/* Animated gradient overlay with more complexity */}
         <motion.div
           className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-purple-500/10 to-pink-500/10"
           animate={{
             background: [
               "linear-gradient(45deg, rgba(6,182,212,0.1), rgba(168,85,247,0.1), rgba(236,72,153,0.1))",
-              "linear-gradient(45deg, rgba(236,72,153,0.1), rgba(6,182,212,0.1), rgba(168,85,247,0.1))",
-              "linear-gradient(45deg, rgba(168,85,247,0.1), rgba(236,72,153,0.1), rgba(6,182,212,0.1))",
+              "linear-gradient(135deg, rgba(236,72,153,0.1), rgba(6,182,212,0.1), rgba(168,85,247,0.1))",
+              "linear-gradient(225deg, rgba(168,85,247,0.1), rgba(236,72,153,0.1), rgba(6,182,212,0.1))",
+              "linear-gradient(315deg, rgba(6,182,212,0.1), rgba(168,85,247,0.1), rgba(236,72,153,0.1))",
             ],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
-        
-        {/* Floating orbs */}
-        <motion.div
-          className="absolute top-20 left-20 w-64 h-64 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 rounded-full blur-3xl"
-          animate={{
-            x: [0, 100, 0],
-            y: [0, -50, 0],
-            scale: [1, 1.2, 1],
           }}
           transition={{
             duration: 12,
@@ -219,12 +204,13 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
           }}
         />
         
+        {/* Multiple floating orbs with different sizes and animations */}
         <motion.div
-          className="absolute bottom-20 right-20 w-80 h-80 bg-gradient-to-r from-pink-500/20 to-cyan-500/20 rounded-full blur-3xl"
+          className="absolute top-20 left-20 w-64 h-64 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 rounded-full blur-3xl"
           animate={{
-            x: [0, -80, 0],
-            y: [0, 60, 0],
-            scale: [1.2, 1, 1.2],
+            x: [0, 100, -50, 0],
+            y: [0, -50, 25, 0],
+            scale: [1, 1.3, 0.8, 1],
           }}
           transition={{
             duration: 15,
@@ -232,91 +218,180 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
             ease: "easeInOut",
           }}
         />
+        
+        <motion.div
+          className="absolute top-1/2 left-1/4 w-32 h-32 bg-gradient-to-r from-pink-500/15 to-cyan-500/15 rounded-full blur-2xl"
+          animate={{
+            x: [0, -80, 60, 0],
+            y: [0, 40, -30, 0],
+            scale: [0.8, 1.2, 1, 0.8],
+          }}
+          transition={{
+            duration: 18,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 3,
+          }}
+        />
+        
+        <motion.div
+          className="absolute bottom-20 right-20 w-80 h-80 bg-gradient-to-r from-pink-500/20 to-cyan-500/20 rounded-full blur-3xl"
+          animate={{
+            x: [0, -80, 40, 0],
+            y: [0, 60, -30, 0],
+            scale: [1.2, 1, 1.4, 1.2],
+          }}
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 2,
+          }}
+        />
+
+        {/* Additional smaller orbs for more depth */}
+        <motion.div
+          className="absolute top-1/3 right-1/3 w-48 h-48 bg-gradient-to-r from-purple-500/15 to-pink-500/15 rounded-full blur-2xl"
+          animate={{
+            x: [0, 50, -30, 0],
+            y: [0, -40, 20, 0],
+            scale: [1, 0.7, 1.1, 1],
+          }}
+          transition={{
+            duration: 14,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 5,
+          }}
+        />
+
+        {/* Floating particles */}
+        {Array.from({ length: 20 }).map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-1 h-1 bg-white/20 rounded-full"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+            }}
+            animate={{
+              y: [0, -100, 0],
+              opacity: [0, 1, 0],
+              scale: [0, 1, 0],
+            }}
+            transition={{
+              duration: 8 + Math.random() * 4,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: Math.random() * 8,
+            }}
+          />
+        ))}
       </div>
 
-      {/* Top Header Bar */}
-      <div className="relative z-10 bg-black/20 backdrop-blur-md border-b border-white/10 h-14 flex items-center justify-between px-4">
+      {/* Top Header Bar with enhanced animations */}
+      <motion.div 
+        className="relative z-10 bg-black/20 backdrop-blur-md border-b border-white/10 h-14 flex items-center justify-between px-4"
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      >
         {/* Left - Back button */}
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={onBack}
-          className="text-white/90 hover:text-white hover:bg-white/10 px-3 py-1.5 h-8 backdrop-blur-sm"
+        <motion.div
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
         >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Menu
-        </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onBack}
+            className="text-white/90 hover:text-white hover:bg-white/10 px-3 py-1.5 h-8 backdrop-blur-sm transition-all duration-300"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Menu
+          </Button>
+        </motion.div>
 
-        {/* Center - Title */}
-        <div className="text-white/90 font-medium">
+        {/* Center - Title with glow effect */}
+        <motion.div 
+          className="text-white/90 font-medium"
+          animate={{ 
+            textShadow: [
+              "0 0 10px rgba(6, 182, 212, 0.3)",
+              "0 0 20px rgba(6, 182, 212, 0.5)",
+              "0 0 10px rgba(6, 182, 212, 0.3)",
+            ]
+          }}
+          transition={{ duration: 3, repeat: Infinity }}
+        >
           RenderCV EngineeringResumes Theme
-        </div>
+        </motion.div>
 
-        {/* Right - Action buttons */}
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setAutoCompileEnabled(!autoCompileEnabled)}
-            className={`border-white/20 text-white/90 hover:bg-white/10 px-3 py-1.5 h-8 text-xs backdrop-blur-sm ${
-              autoCompileEnabled ? 'bg-white/10' : 'bg-transparent'
-            }`}
-          >
-            Auto-compile
-          </Button>
-          
-          <Button
-            size="sm"
-            onClick={handleCompile}
-            disabled={isCompiling}
-            className="bg-green-500/80 hover:bg-green-500 text-white px-3 py-1.5 h-8 text-xs backdrop-blur-sm glow-effect"
-          >
-            <Play className="w-3 h-3 mr-1.5" />
-            Recompile
-          </Button>
-          
-          <Button
-            variant="outline"
-            size="sm"
-            className="border-white/20 text-white/90 hover:bg-white/10 px-2 py-1.5 h-8 backdrop-blur-sm"
-          >
-            Review
-          </Button>
-          
-          <Button
-            variant="outline"
-            size="sm"
-            className="border-white/20 text-white/90 hover:bg-white/10 px-2 py-1.5 h-8 backdrop-blur-sm"
-          >
-            Share
-          </Button>
-          
-          <Button
-            variant="outline"
-            size="sm"
-            className="border-white/20 text-white/90 hover:bg-white/10 px-2 py-1.5 h-8 backdrop-blur-sm"
-          >
-            Submit
-          </Button>
-          
-          <Button
-            variant="outline"
-            size="sm"
-            className="border-white/20 text-white/90 hover:bg-white/10 px-2 py-1.5 h-8 backdrop-blur-sm"
-          >
-            History
-          </Button>
-        </div>
-      </div>
+        {/* Right - Action buttons with stagger animation */}
+        <motion.div 
+          className="flex items-center gap-2"
+          initial={{ x: 20, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
+          {[
+            { text: "Auto-compile", active: autoCompileEnabled, onClick: () => setAutoCompileEnabled(!autoCompileEnabled) },
+            { text: "Recompile", icon: Play, onClick: handleCompile, disabled: isCompiling, variant: "primary" },
+            { text: "Review" },
+            { text: "Share" },
+            { text: "Submit" },
+            { text: "History" },
+          ].map((button, index) => (
+            <motion.div
+              key={button.text}
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.1 * index, duration: 0.3 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Button
+                variant={button.variant === "primary" ? "default" : "outline"}
+                size="sm"
+                onClick={button.onClick}
+                disabled={button.disabled}
+                className={`
+                  ${button.variant === "primary" 
+                    ? "bg-green-500/80 hover:bg-green-500 text-white glow-effect" 
+                    : "border-white/20 text-white/90 hover:bg-white/10"
+                  } 
+                  px-3 py-1.5 h-8 text-xs backdrop-blur-sm transition-all duration-300
+                  ${button.active ? 'bg-white/10' : 'bg-transparent'}
+                `}
+              >
+                {button.icon && <button.icon className="w-3 h-3 mr-1.5" />}
+                {button.text}
+              </Button>
+            </motion.div>
+          ))}
+        </motion.div>
+      </motion.div>
 
-      {/* Main Content - Three panels */}
+      {/* Main Content - Three panels with enhanced animations */}
       <div className="relative z-10 flex h-[calc(100vh-56px)]">
-        {/* Left Sidebar - File outline */}
-        <div className="w-60 bg-black/20 backdrop-blur-md border-r border-white/10">
+        {/* Left Sidebar with enhanced animations */}
+        <motion.div 
+          className="w-60 bg-black/20 backdrop-blur-md border-r border-white/10"
+          initial={{ x: -240, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+        >
           <div className="p-4">
-            <h3 className="text-sm font-medium text-white/90 mb-3">File outline</h3>
+            <motion.h3 
+              className="text-sm font-medium text-white/90 mb-3"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.8 }}
+            >
+              File outline
+            </motion.h3>
             <div className="space-y-1">
-              {sections.map((section) => (
+              {sections.map((section, index) => (
                 <motion.div
                   key={section}
                   onClick={() => setSelectedSection(section)}
@@ -325,7 +400,10 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
                       ? 'bg-white/20 text-white backdrop-blur-sm glow-effect'
                       : 'text-white/70 hover:bg-white/10 hover:text-white/90'
                   }`}
-                  whileHover={{ scale: 1.02 }}
+                  initial={{ x: -20, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.9 + index * 0.1 }}
+                  whileHover={{ scale: 1.02, x: 5 }}
                   whileTap={{ scale: 0.98 }}
                 >
                   {section}
@@ -333,100 +411,160 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
               ))}
             </div>
           </div>
-        </div>
+        </motion.div>
 
-        {/* Center - LaTeX Editor */}
-        <div className="flex-1 border-r border-white/10">
+        {/* Center - LaTeX Editor with enhanced animations */}
+        <motion.div 
+          className="flex-1 border-r border-white/10"
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+        >
           <div className="h-full bg-black/20 backdrop-blur-md">
             {/* Editor Tabs */}
-            <div className="bg-black/30 backdrop-blur-md border-b border-white/10 px-4 py-0 flex items-center">
-              <div className="bg-white/10 backdrop-blur-sm border-t border-l border-r border-white/20 px-4 py-2 text-sm font-medium text-white/90 rounded-t-lg">
+            <motion.div 
+              className="bg-black/30 backdrop-blur-md border-b border-white/10 px-4 py-0 flex items-center"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1.2 }}
+            >
+              <motion.div 
+                className="bg-white/10 backdrop-blur-sm border-t border-l border-r border-white/20 px-4 py-2 text-sm font-medium text-white/90 rounded-t-lg"
+                whileHover={{ backgroundColor: "rgba(255,255,255,0.15)" }}
+              >
                 main.tex
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
             
             {/* Editor Toolbar */}
-            <div className="bg-black/20 backdrop-blur-md border-b border-white/10 px-4 py-2 flex items-center justify-between">
+            <motion.div 
+              className="bg-black/20 backdrop-blur-md border-b border-white/10 px-4 py-2 flex items-center justify-between"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1.4 }}
+            >
               <div className="flex items-center gap-2">
                 <span className="text-sm text-white/70">Code Editor</span>
               </div>
               <div className="flex items-center gap-2">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleCopy}
-                  className="text-white/70 hover:text-white hover:bg-white/10 p-2 h-8 w-8 backdrop-blur-sm"
-                >
-                  <Copy className="w-4 h-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleReset}
-                  className="text-white/70 hover:text-white hover:bg-white/10 p-2 h-8 w-8 backdrop-blur-sm"
-                >
-                  <RotateCcw className="w-4 h-4" />
-                </Button>
+                {[
+                  { icon: Copy, onClick: handleCopy },
+                  { icon: RotateCcw, onClick: handleReset },
+                ].map((button, index) => (
+                  <motion.div
+                    key={index}
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                    whileTap={{ scale: 0.9 }}
+                  >
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={button.onClick}
+                      className="text-white/70 hover:text-white hover:bg-white/10 p-2 h-8 w-8 backdrop-blur-sm transition-all duration-300"
+                    >
+                      <button.icon className="w-4 h-4" />
+                    </Button>
+                  </motion.div>
+                ))}
               </div>
-            </div>
+            </motion.div>
 
             {/* Editor Content */}
-            <div className="h-[calc(100%-81px)]">
+            <motion.div 
+              className="h-[calc(100%-81px)]"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1.6 }}
+            >
               <LaTeXEditor
                 code={latexCode}
                 onChange={handleLatexChange}
               />
-            </div>
+            </motion.div>
           </div>
-        </div>
+        </motion.div>
 
-        {/* Right - PDF Preview */}
-        <div className="flex-1">
+        {/* Right - PDF Preview with enhanced animations */}
+        <motion.div 
+          className="flex-1"
+          initial={{ x: 20, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.6 }}
+        >
           <div className="h-full bg-black/20 backdrop-blur-md">
             {/* Preview Header */}
-            <div className="bg-black/20 backdrop-blur-md border-b border-white/10 px-4 py-2 flex items-center justify-between">
+            <motion.div 
+              className="bg-black/20 backdrop-blur-md border-b border-white/10 px-4 py-2 flex items-center justify-between"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1.8 }}
+            >
               <div className="flex items-center gap-2">
-                <Eye className="w-4 h-4 text-white/70" />
+                <motion.div
+                  animate={{ scale: [1, 1.1, 1] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                >
+                  <Eye className="w-4 h-4 text-white/70" />
+                </motion.div>
                 <span className="text-sm text-white/90 font-medium">Portfolio Preview</span>
                 <span className="text-xs text-white/60">Compiled from LaTeX</span>
               </div>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleDownloadTeX}
-                  className="border-white/20 text-white/90 hover:bg-white/10 px-3 py-1.5 h-7 text-xs backdrop-blur-sm"
-                >
-                  .tex
-                </Button>
-                <Button
-                  size="sm"
-                  onClick={handleDownloadPDF}
-                  className="bg-blue-600/80 hover:bg-blue-600 text-white px-3 py-1.5 h-7 text-xs backdrop-blur-sm glow-effect"
-                >
-                  PDF
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleDownloadPDF}
-                  className="text-white/70 hover:text-white hover:bg-white/10 p-1.5 h-7 w-7 backdrop-blur-sm"
-                >
-                  <Download className="w-4 h-4" />
-                </Button>
-              </div>
-            </div>
+              <motion.div 
+                className="flex items-center gap-2"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 2 }}
+              >
+                {[
+                  { text: ".tex", onClick: handleDownloadTeX },
+                  { text: "PDF", onClick: handleDownloadPDF, variant: "primary" },
+                  { icon: Download, onClick: handleDownloadPDF },
+                ].map((button, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 2.1 + index * 0.1 }}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Button
+                      variant={button.variant === "primary" ? "default" : button.icon ? "ghost" : "outline"}
+                      size="sm"
+                      onClick={button.onClick}
+                      className={`
+                        ${button.variant === "primary" 
+                          ? "bg-blue-600/80 hover:bg-blue-600 text-white glow-effect" 
+                          : button.icon 
+                            ? "text-white/70 hover:text-white hover:bg-white/10 p-1.5 h-7 w-7"
+                            : "border-white/20 text-white/90 hover:bg-white/10 px-3 py-1.5 h-7"
+                        } 
+                        text-xs backdrop-blur-sm transition-all duration-300
+                      `}
+                    >
+                      {button.icon && <button.icon className="w-4 h-4" />}
+                      {button.text}
+                    </Button>
+                  </motion.div>
+                ))}
+              </motion.div>
+            </motion.div>
             
             {/* Preview Content */}
-            <div className="h-[calc(100%-41px)]">
+            <motion.div 
+              className="h-[calc(100%-41px)]"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 2.2 }}
+            >
               <PDFPreview
                 pdfUrl={pdfUrl}
                 isCompiling={isCompiling}
                 fullscreen
               />
-            </div>
+            </motion.div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

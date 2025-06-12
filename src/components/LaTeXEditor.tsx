@@ -30,10 +30,10 @@ const LaTeXEditor = ({ code, onChange }: LaTeXEditorProps) => {
   };
 
   return (
-    <div className="h-full bg-black/30 backdrop-blur-md">
+    <div className="h-full bg-black/30 backdrop-blur-md overflow-hidden">
       <div className="flex h-full">
         {/* Line numbers */}
-        <div className="bg-black/40 backdrop-blur-sm border-r border-white/10 px-3 py-4 text-xs text-white/60 font-mono select-none min-w-[50px]">
+        <div className="bg-black/40 backdrop-blur-sm border-r border-white/10 px-3 py-4 text-xs text-white/60 font-mono select-none min-w-[50px] overflow-y-auto">
           {localCode.split('\n').map((_, index) => (
             <div key={index} className="leading-6 text-right">
               {index + 1}
@@ -42,11 +42,11 @@ const LaTeXEditor = ({ code, onChange }: LaTeXEditorProps) => {
         </div>
         
         {/* Editor content */}
-        <div className="flex-1 relative">
+        <div className="flex-1 relative overflow-hidden">
           <textarea
             value={localCode}
             onChange={(e) => handleCodeChange(e.target.value)}
-            className="w-full h-full p-4 bg-transparent text-white/90 font-mono text-sm leading-6 resize-none outline-none border-0 overflow-y-auto placeholder-white/40"
+            className="w-full h-full p-4 bg-transparent text-white/90 font-mono text-sm leading-6 resize-none outline-none border-0 overflow-y-auto placeholder-white/40 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/20 hover:scrollbar-thumb-white/30"
             placeholder="Write your LaTeX code here..."
             spellCheck={false}
             style={{
