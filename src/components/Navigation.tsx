@@ -2,8 +2,8 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Menu, X, User, FileText, Rocket, LogOut, Settings, UserCircle } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Menu, X, User, FileText, Rocket, LogOut, Settings, UserCircle, LayoutDashboard } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import MagneticCursor from "@/components/MagneticCursor";
 import {
@@ -17,6 +17,7 @@ import {
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { user, profile, signOut, isAuthenticated, loading } = useAuth();
+  const navigate = useNavigate();
 
   const navItems = [
     { name: "Templates", href: "#templates" },
@@ -25,6 +26,15 @@ const Navigation = () => {
 
   const avatarUrl = profile?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email}`;
   const displayName = profile?.name || user?.email?.split('@')[0] || 'User';
+
+  const handleCreatePortfolio = () => {
+    if (!isAuthenticated) {
+      navigate("/signup");
+    } else {
+      // Navigate to portfolio creation - for now go to dashboard
+      navigate("/dashboard");
+    }
+  };
 
   if (loading) {
     return null; // Or a loading spinner
@@ -46,16 +56,18 @@ const Navigation = () => {
               whileHover={{ scale: 1.05 }}
               className="flex items-center space-x-3"
             >
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-                className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-cyan-400 to-purple-500 rounded-full flex items-center justify-center"
-              >
-                <Rocket className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-              </motion.div>
-              <span className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
-                CosmicFolio
-              </span>
+              <Link to="/" className="flex items-center space-x-3">
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                  className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-cyan-400 to-purple-500 rounded-full flex items-center justify-center"
+                >
+                  <Rocket className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                </motion.div>
+                <span className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+                  CosmicFolio
+                </span>
+              </Link>
             </motion.div>
 
             {/* Desktop Navigation */}
@@ -84,55 +96,89 @@ const Navigation = () => {
                   )}
                 </motion.div>
               ))}
+              
+              {/* Dashboard link for authenticated users */}
+              {isAuthenticated && (
+                <motion.div
+                  whileHover={{ y: -2 }}
+                  transition={{ type: "spring", stiffness: 400 }}
+                  className="interactive"
+                >
+                  <Link
+                    to="/dashboard"
+                    className="text-slate-300 hover:text-cyan-400 transition-colors duration-300 font-medium interactive"
+                  >
+                    Dashboard
+                  </Link>
+                </motion.div>
+              )}
             </div>
 
             {/* Desktop Auth Section */}
             <div className="hidden md:flex items-center space-x-4">
               {isAuthenticated ? (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="flex items-center space-x-3 text-slate-300 hover:text-white transition-colors interactive bg-slate-800/50 border border-slate-600/50 hover:border-slate-500 rounded-lg px-3 py-2"
+                <div className="flex items-center space-x-4">
+                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                    <Button
+                      onClick={handleCreatePortfolio}
+                      className="bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white border-0 shadow-lg interactive"
                     >
-                      <img
-                        src={avatarUrl}
-                        alt={displayName}
-                        className="w-8 h-8 rounded-full"
-                      />
-                      <span className="font-medium">{displayName}</span>
-                    </motion.button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent 
-                    align="end" 
-                    className="w-48 bg-slate-800/90 backdrop-blur-xl border-slate-600/50"
-                  >
-                    <div className="px-3 py-2 border-b border-slate-600/50">
-                      <p className="text-sm text-slate-300">{user?.email}</p>
-                    </div>
-                    <DropdownMenuItem asChild>
-                      <Link to="/profile" className="text-slate-300 hover:text-white">
-                        <UserCircle className="w-4 h-4 mr-2" />
-                        Profile
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link to="/settings" className="text-slate-300 hover:text-white">
-                        <Settings className="w-4 h-4 mr-2" />
-                        Settings
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator className="bg-slate-600/50" />
-                    <DropdownMenuItem 
-                      onClick={signOut}
-                      className="text-slate-300 hover:text-white cursor-pointer"
+                      <FileText className="w-4 h-4 mr-2" />
+                      Create Portfolio
+                    </Button>
+                  </motion.div>
+                  
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="flex items-center space-x-3 text-slate-300 hover:text-white transition-colors interactive bg-slate-800/50 border border-slate-600/50 hover:border-slate-500 rounded-lg px-3 py-2"
+                      >
+                        <img
+                          src={avatarUrl}
+                          alt={displayName}
+                          className="w-8 h-8 rounded-full"
+                        />
+                        <span className="font-medium">{displayName}</span>
+                      </motion.button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent 
+                      align="end" 
+                      className="w-48 bg-slate-800/90 backdrop-blur-xl border-slate-600/50"
                     >
-                      <LogOut className="w-4 h-4 mr-2" />
-                      Sign Out
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                      <div className="px-3 py-2 border-b border-slate-600/50">
+                        <p className="text-sm text-slate-300">{user?.email}</p>
+                      </div>
+                      <DropdownMenuItem asChild>
+                        <Link to="/dashboard" className="text-slate-300 hover:text-white">
+                          <LayoutDashboard className="w-4 h-4 mr-2" />
+                          Dashboard
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link to="/profile" className="text-slate-300 hover:text-white">
+                          <UserCircle className="w-4 h-4 mr-2" />
+                          Profile
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link to="/settings" className="text-slate-300 hover:text-white">
+                          <Settings className="w-4 h-4 mr-2" />
+                          Settings
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator className="bg-slate-600/50" />
+                      <DropdownMenuItem 
+                        onClick={signOut}
+                        className="text-slate-300 hover:text-white cursor-pointer"
+                      >
+                        <LogOut className="w-4 h-4 mr-2" />
+                        Sign Out
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
               ) : (
                 <>
                   <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
@@ -147,12 +193,13 @@ const Navigation = () => {
                     </Link>
                   </motion.div>
                   <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                    <Link to="/signup">
-                      <Button className="bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white border-0 shadow-lg interactive">
-                        <FileText className="w-4 h-4 mr-2" />
-                        Sign Up
-                      </Button>
-                    </Link>
+                    <Button
+                      onClick={handleCreatePortfolio}
+                      className="bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white border-0 shadow-lg interactive"
+                    >
+                      <FileText className="w-4 h-4 mr-2" />
+                      Sign Up
+                    </Button>
                   </motion.div>
                 </>
               )}
@@ -208,6 +255,23 @@ const Navigation = () => {
                     </motion.div>
                   ))}
                   
+                  {/* Dashboard link for authenticated users in mobile */}
+                  {isAuthenticated && (
+                    <motion.div
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: navItems.length * 0.1 }}
+                    >
+                      <Link
+                        to="/dashboard"
+                        onClick={() => setIsOpen(false)}
+                        className="block text-slate-300 hover:text-cyan-400 transition-colors duration-300 font-medium py-2 interactive"
+                      >
+                        Dashboard
+                      </Link>
+                    </motion.div>
+                  )}
+                  
                   <div className="pt-4 space-y-3 border-t border-slate-700/50">
                     {isAuthenticated ? (
                       <>
@@ -222,6 +286,25 @@ const Navigation = () => {
                             <p className="text-slate-400 text-sm">{user?.email}</p>
                           </div>
                         </div>
+                        <Button
+                          onClick={() => {
+                            handleCreatePortfolio();
+                            setIsOpen(false);
+                          }}
+                          className="w-full justify-start bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white interactive"
+                        >
+                          <FileText className="w-4 h-4 mr-2" />
+                          Create Portfolio
+                        </Button>
+                        <Link to="/dashboard" onClick={() => setIsOpen(false)}>
+                          <Button
+                            variant="ghost"
+                            className="w-full justify-start text-slate-300 hover:text-white hover:bg-slate-800/50 border border-slate-600/50 interactive"
+                          >
+                            <LayoutDashboard className="w-4 h-4 mr-2" />
+                            Dashboard
+                          </Button>
+                        </Link>
                         <Link to="/profile" onClick={() => setIsOpen(false)}>
                           <Button
                             variant="ghost"
@@ -263,12 +346,16 @@ const Navigation = () => {
                             Login
                           </Button>
                         </Link>
-                        <Link to="/signup" onClick={() => setIsOpen(false)}>
-                          <Button className="w-full justify-start bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white interactive">
-                            <FileText className="w-4 h-4 mr-2" />
-                            Sign Up
-                          </Button>
-                        </Link>
+                        <Button
+                          onClick={() => {
+                            handleCreatePortfolio();
+                            setIsOpen(false);
+                          }}
+                          className="w-full justify-start bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white interactive"
+                        >
+                          <FileText className="w-4 h-4 mr-2" />
+                          Sign Up
+                        </Button>
                       </>
                     )}
                   </div>

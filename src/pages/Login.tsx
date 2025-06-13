@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Eye, EyeOff, Mail, Lock, ArrowLeft, Rocket } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import SpaceBackground from "@/components/SpaceBackground";
@@ -20,11 +20,15 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { signIn, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
+
+  // Get the return URL from location state
+  const from = location.state?.from?.pathname || "/";
 
   // Redirect if already authenticated
   if (isAuthenticated) {
-    navigate("/");
+    navigate(from, { replace: true });
     return null;
   }
 
@@ -45,7 +49,8 @@ const Login = () => {
         title: "Welcome back!",
         description: "You have successfully signed in.",
       });
-      navigate("/");
+      // Redirect to the return URL or dashboard
+      navigate(from === "/" ? "/dashboard" : from, { replace: true });
     }
     
     setIsLoading(false);

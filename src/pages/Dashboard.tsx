@@ -135,9 +135,9 @@ const Dashboard = () => {
               </div>
             </div>
 
-            {/* Create New Button */}
+            {/* Create New Button - now links to home page for portfolio creation */}
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Link to="/">
+              <Link to="/#templates">
                 <Button className="bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white shadow-lg glow-effect interactive">
                   <Plus className="w-4 h-4 mr-2" />
                   Create New Portfolio
