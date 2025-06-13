@@ -20,8 +20,8 @@ const Navigation = () => {
   const navigate = useNavigate();
 
   const navItems = [
-    { name: "Templates", href: "#templates" },
-    { name: "Features", href: "#features" },
+    { name: "Templates", href: "/#templates", isHash: true },
+    { name: "Features", href: "/#features", isHash: true },
   ];
 
   const avatarUrl = profile?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email}`;
@@ -31,13 +31,41 @@ const Navigation = () => {
     if (!isAuthenticated) {
       navigate("/signup");
     } else {
-      // Navigate to portfolio creation - for now go to dashboard
-      navigate("/dashboard");
+      // Scroll to templates section on home page
+      navigate("/#templates");
+      setTimeout(() => {
+        const templatesSection = document.getElementById('templates');
+        if (templatesSection) {
+          templatesSection.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
     }
   };
 
+  const handleNavClick = (href: string, isHash: boolean) => {
+    if (isHash) {
+      if (window.location.pathname !== '/') {
+        navigate('/');
+        setTimeout(() => {
+          const element = document.querySelector(href);
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+          }
+        }, 100);
+      } else {
+        const element = document.querySelector(href);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+    } else {
+      navigate(href);
+    }
+    setIsOpen(false);
+  };
+
   if (loading) {
-    return null; // Or a loading spinner
+    return null;
   }
 
   return (
@@ -79,21 +107,12 @@ const Navigation = () => {
                   transition={{ type: "spring", stiffness: 400 }}
                   className="interactive"
                 >
-                  {item.href.startsWith('#') ? (
-                    <a
-                      href={item.href}
-                      className="text-slate-300 hover:text-cyan-400 transition-colors duration-300 font-medium interactive"
-                    >
-                      {item.name}
-                    </a>
-                  ) : (
-                    <Link
-                      to={item.href}
-                      className="text-slate-300 hover:text-cyan-400 transition-colors duration-300 font-medium interactive"
-                    >
-                      {item.name}
-                    </Link>
-                  )}
+                  <button
+                    onClick={() => handleNavClick(item.href, item.isHash)}
+                    className="text-slate-300 hover:text-cyan-400 transition-colors duration-300 font-medium interactive"
+                  >
+                    {item.name}
+                  </button>
                 </motion.div>
               ))}
               
@@ -235,23 +254,12 @@ const Navigation = () => {
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: index * 0.1 }}
                     >
-                      {item.href.startsWith('#') ? (
-                        <a
-                          href={item.href}
-                          onClick={() => setIsOpen(false)}
-                          className="block text-slate-300 hover:text-cyan-400 transition-colors duration-300 font-medium py-2 interactive"
-                        >
-                          {item.name}
-                        </a>
-                      ) : (
-                        <Link
-                          to={item.href}
-                          onClick={() => setIsOpen(false)}
-                          className="block text-slate-300 hover:text-cyan-400 transition-colors duration-300 font-medium py-2 interactive"
-                        >
-                          {item.name}
-                        </Link>
-                      )}
+                      <button
+                        onClick={() => handleNavClick(item.href, item.isHash)}
+                        className="block w-full text-left text-slate-300 hover:text-cyan-400 transition-colors duration-300 font-medium py-2 interactive"
+                      >
+                        {item.name}
+                      </button>
                     </motion.div>
                   ))}
                   

@@ -9,6 +9,39 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      portfolios: {
+        Row: {
+          content: Json | null
+          created_at: string
+          id: string
+          latex_source: string | null
+          name: string
+          template: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content?: Json | null
+          created_at?: string
+          id?: string
+          latex_source?: string | null
+          name: string
+          template: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: Json | null
+          created_at?: string
+          id?: string
+          latex_source?: string | null
+          name?: string
+          template?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -30,6 +63,27 @@ export type Database = {
           id?: string
           name?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      template_downloads: {
+        Row: {
+          downloaded_at: string
+          id: string
+          template_name: string
+          user_id: string
+        }
+        Insert: {
+          downloaded_at?: string
+          id?: string
+          template_name: string
+          user_id: string
+        }
+        Update: {
+          downloaded_at?: string
+          id?: string
+          template_name?: string
+          user_id?: string
         }
         Relationships: []
       }

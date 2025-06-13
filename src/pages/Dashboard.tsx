@@ -2,72 +2,65 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
-  FileText, 
-  Edit3, 
-  Download, 
-  Trash2, 
   Plus, 
-  Calendar,
-  Eye,
   Search,
-  Filter
+  Filter,
+  FileText,
+  ArrowLeft
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import SpaceBackground from "@/components/SpaceBackground";
 import FloatingElements from "@/components/FloatingElements";
 import Navigation from "@/components/Navigation";
 import MagneticCursor from "@/components/MagneticCursor";
 import ParticleSystem from "@/components/ParticleSystem";
-
-// Mock data for portfolios
-const mockPortfolios = [
-  {
-    id: "1",
-    name: "Software Engineer Resume",
-    template: "Professional",
-    lastModified: "2024-01-15",
-    created: "2024-01-10",
-    preview: "/api/placeholder/300/400"
-  },
-  {
-    id: "2", 
-    name: "Academic CV",
-    template: "Academic",
-    lastModified: "2024-01-12",
-    created: "2024-01-08",
-    preview: "/api/placeholder/300/400"
-  },
-  {
-    id: "3",
-    name: "Creative Portfolio",
-    template: "Creative", 
-    lastModified: "2024-01-10",
-    created: "2024-01-05",
-    preview: "/api/placeholder/300/400"
-  },
-  {
-    id: "4",
-    name: "Minimal Resume",
-    template: "Minimal",
-    lastModified: "2024-01-08",
-    created: "2024-01-03",
-    preview: "/api/placeholder/300/400"
-  }
-];
+import PortfolioCard from "@/components/PortfolioCard";
+import { usePortfolios } from "@/hooks/usePortfolios";
+import { useToast } from "@/hooks/use-toast";
 
 const Dashboard = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedTemplate, setSelectedTemplate] = useState("All");
+  const { portfolios, isLoading, deletePortfolio } = usePortfolios();
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
   const templates = ["All", "Professional", "Academic", "Creative", "Minimal"];
 
-  const filteredPortfolios = mockPortfolios.filter(portfolio => {
+  const filteredPortfolios = portfolios.filter(portfolio => {
     const matchesSearch = portfolio.name.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesTemplate = selectedTemplate === "All" || portfolio.template === selectedTemplate;
     return matchesSearch && matchesTemplate;
   });
+
+  const handleEdit = (id: string) => {
+    // TODO: Navigate to portfolio editor
+    toast({
+      title: "Feature coming soon",
+      description: "Portfolio editing will be available soon.",
+    });
+  };
+
+  const handlePreview = (id: string) => {
+    // TODO: Navigate to portfolio preview
+    toast({
+      title: "Feature coming soon",
+      description: "Portfolio preview will be available soon.",
+    });
+  };
+
+  const handleDownload = (id: string) => {
+    // TODO: Implement PDF download
+    toast({
+      title: "Feature coming soon",
+      description: "PDF download will be available soon.",
+    });
+  };
+
+  const handleDelete = async (id: string) => {
+    await deletePortfolio.mutateAsync(id);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
@@ -79,6 +72,24 @@ const Dashboard = () => {
       
       {/* Navigation */}
       <Navigation />
+      
+      {/* Back Button */}
+      <motion.div
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.8 }}
+        className="absolute top-24 left-6 z-10"
+      >
+        <Link to="/">
+          <Button
+            variant="ghost"
+            className="text-slate-300 hover:text-white hover:bg-slate-800/50 border border-slate-600/50 hover:border-slate-500 interactive"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Home
+          </Button>
+        </Link>
+      </motion.div>
       
       {/* Main Content */}
       <div className="relative z-10 pt-24 pb-16">
@@ -135,7 +146,7 @@ const Dashboard = () => {
               </div>
             </div>
 
-            {/* Create New Button - now links to home page for portfolio creation */}
+            {/* Create New Button */}
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Link to="/#templates">
                 <Button className="bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white shadow-lg glow-effect interactive">
@@ -146,92 +157,37 @@ const Dashboard = () => {
             </motion.div>
           </motion.div>
 
+          {/* Loading State */}
+          {isLoading && (
+            <div className="text-center py-16">
+              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-cyan-400 mx-auto mb-4"></div>
+              <p className="text-slate-300">Loading your portfolios...</p>
+            </div>
+          )}
+
           {/* Portfolio Grid */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-          >
-            {filteredPortfolios.map((portfolio, index) => (
-              <motion.div
-                key={portfolio.id}
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                whileHover={{ y: -5, scale: 1.02 }}
-                className="group"
-              >
-                <Card className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/40 hover:border-cyan-400/70 transition-all duration-500 overflow-hidden shadow-2xl glow-effect interactive">
-                  {/* Preview Image */}
-                  <div className="relative aspect-[3/4] bg-slate-800/50 overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/20 to-purple-500/20 flex items-center justify-center">
-                      <FileText className="w-16 h-16 text-slate-400" />
-                    </div>
-                    
-                    {/* Hover Overlay */}
-                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                      <div className="flex gap-2">
-                        <motion.button
-                          whileHover={{ scale: 1.1 }}
-                          className="p-2 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 transition-colors interactive"
-                        >
-                          <Eye className="w-4 h-4" />
-                        </motion.button>
-                        <motion.button
-                          whileHover={{ scale: 1.1 }}
-                          className="p-2 bg-cyan-500/80 backdrop-blur-sm rounded-full text-white hover:bg-cyan-500 transition-colors interactive"
-                        >
-                          <Edit3 className="w-4 h-4" />
-                        </motion.button>
-                      </div>
-                    </div>
-                  </div>
-
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-lg text-slate-100 line-clamp-1">
-                      {portfolio.name}
-                    </CardTitle>
-                    <CardDescription className="text-sm">
-                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-purple-500/20 text-purple-300 border border-purple-500/30">
-                        {portfolio.template}
-                      </span>
-                    </CardDescription>
-                  </CardHeader>
-
-                  <CardContent className="pt-0">
-                    <div className="flex items-center justify-between text-xs text-slate-400 mb-4">
-                      <div className="flex items-center">
-                        <Calendar className="w-3 h-3 mr-1" />
-                        Modified {portfolio.lastModified}
-                      </div>
-                    </div>
-
-                    <div className="flex gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="flex-1 border-slate-600/50 text-slate-300 hover:bg-slate-800/50 hover:text-white interactive"
-                      >
-                        <Download className="w-3 h-3 mr-1" />
-                        PDF
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="border-slate-600/50 text-slate-300 hover:bg-red-500/20 hover:border-red-500/50 hover:text-red-300 interactive"
-                      >
-                        <Trash2 className="w-3 h-3" />
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </motion.div>
+          {!isLoading && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+            >
+              {filteredPortfolios.map((portfolio, index) => (
+                <PortfolioCard
+                  key={portfolio.id}
+                  portfolio={portfolio}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                  onPreview={handlePreview}
+                  onDownload={handleDownload}
+                />
+              ))}
+            </motion.div>
+          )}
 
           {/* Empty State */}
-          {filteredPortfolios.length === 0 && (
+          {!isLoading && filteredPortfolios.length === 0 && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -239,7 +195,7 @@ const Dashboard = () => {
             >
               <FileText className="w-16 h-16 text-slate-400 mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-slate-300 mb-2">
-                No portfolios found
+                {portfolios.length === 0 ? "No portfolios yet" : "No portfolios found"}
               </h3>
               <p className="text-slate-400 mb-6">
                 {searchTerm || selectedTemplate !== "All" 
@@ -247,7 +203,7 @@ const Dashboard = () => {
                   : "Create your first cosmic portfolio to get started"
                 }
               </p>
-              <Link to="/">
+              <Link to="/#templates">
                 <Button className="bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white glow-effect interactive">
                   <Plus className="w-4 h-4 mr-2" />
                   Create Your First Portfolio
