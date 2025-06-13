@@ -23,9 +23,15 @@ const Signup = () => {
     password: "",
     confirmPassword: ""
   });
-  const { signIn } = useAuth();
+  const { signUp, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  // Redirect if already authenticated
+  if (isAuthenticated) {
+    navigate("/");
+    return null;
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,25 +45,34 @@ const Signup = () => {
       return;
     }
     
-    setIsLoading(true);
-    
-    try {
-      // For demo purposes, automatically sign in after "signup"
-      await signIn(formData.email, formData.password);
+    if (formData.password.length < 6) {
       toast({
-        title: "Account created!",
-        description: "Welcome to CosmicFolio! Your account has been created successfully.",
-      });
-      navigate("/dashboard");
-    } catch (error) {
-      toast({
-        title: "Sign up failed",
-        description: "Please try again later.",
+        title: "Password too short",
+        description: "Password must be at least 6 characters long.",
         variant: "destructive",
       });
-    } finally {
-      setIsLoading(false);
+      return;
     }
+    
+    setIsLoading(true);
+    
+    const { error } = await signUp(formData.email, formData.password, formData.name);
+    
+    if (error) {
+      toast({
+        title: "Sign up failed",
+        description: error.message || "Please try again later.",
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Account created!",
+        description: "Please check your email to verify your account.",
+      });
+      navigate("/login");
+    }
+    
+    setIsLoading(false);
   };
 
   const handleChange = (field: string, value: string) => {
@@ -82,7 +97,7 @@ const Signup = () => {
         <Link to="/">
           <Button
             variant="ghost"
-            className="text-slate-300 hover:text-white hover:bg-slate-800/50 border border-slate-600/50 hover:border-slate-505 interactive"
+            className="text-slate-300 hover:text-white hover:bg-slate-800/50 border border-slate-600/50 hover:border-slate-500 interactive"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Home

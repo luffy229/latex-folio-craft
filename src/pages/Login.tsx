@@ -18,30 +18,37 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { signIn } = useAuth();
+  const { signIn, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  // Redirect if already authenticated
+  if (isAuthenticated) {
+    navigate("/");
+    return null;
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     
-    try {
-      await signIn(email, password);
+    const { error } = await signIn(email, password);
+    
+    if (error) {
+      toast({
+        title: "Sign in failed",
+        description: error.message || "Please check your credentials and try again.",
+        variant: "destructive",
+      });
+    } else {
       toast({
         title: "Welcome back!",
         description: "You have successfully signed in.",
       });
-      navigate("/dashboard");
-    } catch (error) {
-      toast({
-        title: "Sign in failed",
-        description: "Please check your credentials and try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
+      navigate("/");
     }
+    
+    setIsLoading(false);
   };
 
   return (
@@ -156,11 +163,6 @@ const Login = () => {
                   <Link to="/signup" className="text-cyan-400 hover:text-cyan-300 transition-colors interactive">
                     Sign up
                   </Link>
-                </p>
-                <p className="text-sm">
-                  <a href="#" className="text-slate-400 hover:text-cyan-400 transition-colors interactive">
-                    Forgot your password?
-                  </a>
                 </p>
               </div>
             </CardContent>

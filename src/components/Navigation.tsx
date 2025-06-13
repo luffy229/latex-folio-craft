@@ -16,12 +16,19 @@ import {
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { user, signOut, isAuthenticated } = useAuth();
+  const { user, profile, signOut, isAuthenticated, loading } = useAuth();
 
   const navItems = [
     { name: "Templates", href: "#templates" },
     { name: "Features", href: "#features" },
   ];
+
+  const avatarUrl = profile?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email}`;
+  const displayName = profile?.name || user?.email?.split('@')[0] || 'User';
+
+  if (loading) {
+    return null; // Or a loading spinner
+  }
 
   return (
     <>
@@ -90,11 +97,11 @@ const Navigation = () => {
                       className="flex items-center space-x-3 text-slate-300 hover:text-white transition-colors interactive bg-slate-800/50 border border-slate-600/50 hover:border-slate-500 rounded-lg px-3 py-2"
                     >
                       <img
-                        src={user?.avatar}
-                        alt={user?.name}
+                        src={avatarUrl}
+                        alt={displayName}
                         className="w-8 h-8 rounded-full"
                       />
-                      <span className="font-medium">{user?.name}</span>
+                      <span className="font-medium">{displayName}</span>
                     </motion.button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent 
@@ -206,12 +213,12 @@ const Navigation = () => {
                       <>
                         <div className="flex items-center space-x-3 py-2">
                           <img
-                            src={user?.avatar}
-                            alt={user?.name}
+                            src={avatarUrl}
+                            alt={displayName}
                             className="w-8 h-8 rounded-full"
                           />
                           <div>
-                            <p className="text-slate-300 font-medium">{user?.name}</p>
+                            <p className="text-slate-300 font-medium">{displayName}</p>
                             <p className="text-slate-400 text-sm">{user?.email}</p>
                           </div>
                         </div>

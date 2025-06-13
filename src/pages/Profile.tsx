@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, User, Mail, Upload, Camera } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import SpaceBackground from "@/components/SpaceBackground";
@@ -14,33 +14,50 @@ import MagneticCursor from "@/components/MagneticCursor";
 import ParticleSystem from "@/components/ParticleSystem";
 
 const Profile = () => {
-  const { user } = useAuth();
+  const { user, profile, updateProfile, isAuthenticated } = useAuth();
   const { toast } = useToast();
-  const [name, setName] = useState(user?.name || "");
+  const navigate = useNavigate();
+  const [name, setName] = useState(profile?.name || "");
   const [email, setEmail] = useState(user?.email || "");
   const [isLoading, setIsLoading] = useState(false);
+
+  // Redirect if not authenticated
+  if (!isAuthenticated) {
+    navigate("/login");
+    return null;
+  }
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    const { error } = await updateProfile({ name });
     
-    toast({
-      title: "Profile updated!",
-      description: "Your profile has been successfully updated.",
-    });
+    if (error) {
+      toast({
+        title: "Update failed",
+        description: error.message || "Failed to update profile. Please try again.",
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Profile updated!",
+        description: "Your profile has been successfully updated.",
+      });
+    }
+    
     setIsLoading(false);
   };
 
   const handleAvatarChange = () => {
-    // Simulate avatar upload
+    // TODO: Implement avatar upload with Supabase Storage
     toast({
-      title: "Avatar updated!",
-      description: "Your profile picture has been updated.",
+      title: "Coming soon!",
+      description: "Avatar upload will be implemented soon.",
     });
   };
+
+  const avatarUrl = profile?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email}`;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
@@ -90,8 +107,8 @@ const Profile = () => {
               <div className="flex flex-col items-center mb-6">
                 <div className="relative">
                   <img
-                    src={user?.avatar}
-                    alt={user?.name}
+                    src={avatarUrl}
+                    alt={profile?.name || user?.email || "Profile"}
                     className="w-24 h-24 rounded-full border-4 border-slate-600/50"
                   />
                   <button
@@ -139,13 +156,12 @@ const Profile = () => {
                     <Input
                       id="email"
                       type="email"
-                      placeholder="your@email.com"
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="pl-10 bg-slate-800/50 border-slate-600/50 text-white placeholder-slate-400 focus:border-cyan-400 interactive"
-                      required
+                      className="pl-10 bg-slate-800/50 border-slate-600/50 text-slate-400 interactive"
+                      disabled
                     />
                   </div>
+                  <p className="text-xs text-slate-500">Email cannot be changed from here</p>
                 </div>
 
                 <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
