@@ -1,11 +1,15 @@
-import { useState, useEffect } from "react";
+
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Download, Eye, FileText, Copy, RotateCcw, Play } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import LaTeXEditor from "./LaTeXEditor";
+import { supabase } from "@/integrations/supabase/client";
+import LaTeXEditor, { LaTeXEditorRef } from "./LaTeXEditor";
 import PDFPreview from "./PDFPreview";
+import FileOutline from "./FileOutline";
 import MagneticCursor from "./MagneticCursor";
+import { parseLatexStructure, OutlineItem } from "@/utils/latexParser";
 
 interface PortfolioBuilderProps {
   onBack: () => void;
@@ -103,39 +107,73 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
   const [isCompiling, setIsCompiling] = useState(false);
   const [pdfUrl, setPdfUrl] = useState("");
   const [autoCompileEnabled, setAutoCompileEnabled] = useState(true);
+  const [outline, setOutline] = useState<OutlineItem[]>([]);
   const { toast } = useToast();
+  const editorRef = useRef<LaTeXEditorRef>(null);
 
-  const sections = ["Profile", "Education", "Experience", "Technical Skills", "Projects"];
+  // Parse LaTeX structure whenever code changes
+  useEffect(() => {
+    const newOutline = parseLatexStructure(latexCode);
+    setOutline(newOutline);
+  }, [latexCode]);
 
+  // Initial compilation
   useEffect(() => {
     handleCompile();
   }, []);
 
+  // Auto-compile when code changes
   useEffect(() => {
     if (!autoCompileEnabled || !latexCode.trim()) return;
     const timer = setTimeout(() => {
       handleCompile();
-    }, 1000);
+    }, 1500); // Increased delay for auto-compile
     return () => clearTimeout(timer);
   }, [latexCode, autoCompileEnabled]);
 
   const handleCompile = async () => {
     if (!latexCode.trim()) return;
+    
     setIsCompiling(true);
-    setTimeout(() => {
-      setPdfUrl(`data:application/pdf;base64,${btoa("Mock PDF content")}`);
-      setIsCompiling(false);
-      if (!autoCompileEnabled) {
-        toast({
-          title: "Compilation Complete",
-          description: "Your portfolio has been compiled successfully!",
-        });
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('compile-latex', {
+        body: { latexCode }
+      });
+
+      if (error) {
+        throw error;
       }
-    }, 1500);
+
+      if (data.success) {
+        setPdfUrl(data.pdfUrl);
+        if (!autoCompileEnabled) {
+          toast({
+            title: "Compilation Complete",
+            description: "Your portfolio has been compiled successfully!",
+          });
+        }
+      } else {
+        throw new Error(data.error || 'Compilation failed');
+      }
+    } catch (error) {
+      console.error('Compilation error:', error);
+      toast({
+        title: "Compilation Error",
+        description: error instanceof Error ? error.message : "Failed to compile LaTeX",
+        variant: "destructive",
+      });
+    } finally {
+      setIsCompiling(false);
+    }
   };
 
   const handleLatexChange = (newCode: string) => {
     setLatexCode(newCode);
+  };
+
+  const handleOutlineItemClick = (line: number) => {
+    editorRef.current?.scrollToLine(line);
   };
 
   const handleCopy = () => {
@@ -338,8 +376,18 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
           transition={{ duration: 0.5, delay: 0.2 }}
         >
           {[
-            { text: "Auto-compile", active: autoCompileEnabled, onClick: () => setAutoCompileEnabled(!autoCompileEnabled) },
-            { text: "Recompile", icon: Play, onClick: handleCompile, disabled: isCompiling, variant: "primary" },
+            { 
+              text: "Auto-compile", 
+              active: autoCompileEnabled, 
+              onClick: () => setAutoCompileEnabled(!autoCompileEnabled) 
+            },
+            { 
+              text: "Recompile", 
+              icon: Play, 
+              onClick: handleCompile, 
+              disabled: isCompiling, 
+              variant: "primary" 
+            },
             { text: "Review" },
             { text: "Share" },
             { text: "Submit" },
@@ -384,36 +432,12 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
         >
-          <div className="p-4">
-            <motion.h3 
-              className="text-sm font-medium text-white/90 mb-3"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.8 }}
-            >
-              File outline
-            </motion.h3>
-            <div className="space-y-1">
-              {sections.map((section, index) => (
-                <motion.div
-                  key={section}
-                  onClick={() => setSelectedSection(section)}
-                  className={`px-3 py-2 text-sm cursor-pointer rounded transition-all duration-300 ${
-                    selectedSection === section
-                      ? 'bg-white/20 text-white backdrop-blur-sm glow-effect'
-                      : 'text-white/70 hover:bg-white/10 hover:text-white/90'
-                  }`}
-                  initial={{ x: -20, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: 0.9 + index * 0.1 }}
-                  whileHover={{ scale: 1.02, x: 5 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  {section}
-                </motion.div>
-              ))}
-            </div>
-          </div>
+          <FileOutline
+            outline={outline}
+            onItemClick={handleOutlineItemClick}
+            selectedSection={selectedSection}
+            onSectionChange={setSelectedSection}
+          />
         </motion.div>
 
         {/* Center - LaTeX Editor with enhanced animations */}
@@ -448,6 +472,16 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
             >
               <div className="flex items-center gap-2">
                 <span className="text-sm text-white/70">Code Editor</span>
+                {isCompiling && (
+                  <motion.div 
+                    className="text-xs text-cyan-400 flex items-center gap-1"
+                    animate={{ opacity: [0.5, 1, 0.5] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                  >
+                    <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse" />
+                    Compiling...
+                  </motion.div>
+                )}
               </div>
               <div className="flex items-center gap-2">
                 {[
@@ -480,6 +514,7 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
               transition={{ delay: 1.6 }}
             >
               <LaTeXEditor
+                ref={editorRef}
                 code={latexCode}
                 onChange={handleLatexChange}
               />
@@ -510,7 +545,7 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
                   <Eye className="w-4 h-4 text-white/70" />
                 </motion.div>
                 <span className="text-sm text-white/90 font-medium">Portfolio Preview</span>
-                <span className="text-xs text-white/60">Compiled from LaTeX</span>
+                <span className="text-xs text-white/60">Real-time LaTeX compilation</span>
               </div>
               <motion.div 
                 className="flex items-center gap-2"
