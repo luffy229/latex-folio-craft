@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Index from "./pages/Index";
@@ -14,8 +14,20 @@ import Signup from "./pages/Signup";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
+import PortfolioBuilder from "./components/PortfolioBuilder";
 
 const queryClient = new QueryClient();
+
+// Create a wrapper component for the PortfolioBuilder
+const PortfolioBuilderPage = () => {
+  const navigate = useNavigate();
+  
+  const handleBack = () => {
+    navigate('/dashboard');
+  };
+
+  return <PortfolioBuilder onBack={handleBack} />;
+};
 
 const App: React.FC = () => (
   <QueryClientProvider client={queryClient}>
@@ -31,6 +43,11 @@ const App: React.FC = () => (
             <Route path="/dashboard" element={
               <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/portfolio/builder" element={
+              <ProtectedRoute>
+                <PortfolioBuilderPage />
               </ProtectedRoute>
             } />
             <Route path="/profile" element={

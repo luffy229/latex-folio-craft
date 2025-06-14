@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -60,6 +59,10 @@ const Dashboard = () => {
 
   const handleDelete = async (id: string) => {
     await deletePortfolio.mutateAsync(id);
+  };
+
+  const handleCreatePortfolio = () => {
+    navigate('/portfolio/builder');
   };
 
   return (
@@ -148,12 +151,13 @@ const Dashboard = () => {
 
             {/* Create New Button */}
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Link to="/#templates">
-                <Button className="bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white shadow-lg glow-effect interactive">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Create New Portfolio
-                </Button>
-              </Link>
+              <Button 
+                onClick={handleCreatePortfolio}
+                className="bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white shadow-lg glow-effect interactive"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Create New Portfolio
+              </Button>
             </motion.div>
           </motion.div>
 
@@ -203,12 +207,13 @@ const Dashboard = () => {
                   : "Create your first cosmic portfolio to get started"
                 }
               </p>
-              <Link to="/#templates">
-                <Button className="bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white glow-effect interactive">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Create Your First Portfolio
-                </Button>
-              </Link>
+              <Button 
+                onClick={handleCreatePortfolio}
+                className="bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white glow-effect interactive"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Create Your First Portfolio
+              </Button>
             </motion.div>
           )}
         </div>
