@@ -7,6 +7,27 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Helper function to safely encode UTF-8 strings to base64
+function utf8ToBase64(str: string): string {
+  try {
+    // Convert string to UTF-8 bytes
+    const encoder = new TextEncoder();
+    const bytes = encoder.encode(str);
+    
+    // Convert bytes to base64
+    let binary = '';
+    const len = bytes.byteLength;
+    for (let i = 0; i < len; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    return btoa(binary);
+  } catch (error) {
+    // Fallback: try to clean the string and encode again
+    const cleanStr = str.replace(/[^\x00-\x7F]/g, ""); // Remove non-ASCII characters
+    return btoa(cleanStr);
+  }
+}
+
 // Enhanced LaTeX to HTML converter
 class LaTeXConverter {
   private errors: string[] = [];
@@ -349,9 +370,12 @@ serve(async (req) => {
     const converter = new LaTeXConverter();
     const result = converter.convert(latexCode);
     
+    // Use the safe UTF-8 to base64 encoding
+    const base64Html = utf8ToBase64(result.html);
+    
     const response = {
       success: true,
-      pdfUrl: `data:text/html;base64,${btoa(result.html)}`,
+      pdfUrl: `data:text/html;base64,${base64Html}`,
       message: result.success 
         ? 'LaTeX successfully converted to HTML preview' 
         : `LaTeX preview generated with ${result.errors.length} warning(s)`,
@@ -370,7 +394,7 @@ serve(async (req) => {
   } catch (error) {
     console.error('Error in LaTeX compilation:', error);
     
-    // Return a basic error preview
+    // Return a basic error preview using safe encoding
     const basicPreview = `
       <!DOCTYPE html>
       <html>
@@ -383,9 +407,11 @@ serve(async (req) => {
       </html>
     `;
     
+    const base64Html = utf8ToBase64(basicPreview);
+    
     return new Response(JSON.stringify({ 
       success: true, 
-      pdfUrl: `data:text/html;base64,${btoa(basicPreview)}`,
+      pdfUrl: `data:text/html;base64,${base64Html}`,
       message: 'Error preview generated',
       isHtmlPreview: true,
       errors: [error.message]
