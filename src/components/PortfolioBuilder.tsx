@@ -12,6 +12,10 @@ import { parseLatexStructure, OutlineItem } from "@/utils/latexParser";
 
 interface PortfolioBuilderProps {
   onBack: () => void;
+  initialTemplate?: {
+    templateId?: string;
+    templateCode?: string;
+  };
 }
 
 const defaultLatexCode = `\\documentclass[10pt, letterpaper]{article}
@@ -93,9 +97,11 @@ A passionate professional with expertise in your field. Write a compelling summa
 
 \\end{document}`;
 
-const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
+const PortfolioBuilder = ({ onBack, initialTemplate }: PortfolioBuilderProps) => {
   const [selectedSection, setSelectedSection] = useState("Profile");
-  const [latexCode, setLatexCode] = useState(defaultLatexCode);
+  const [latexCode, setLatexCode] = useState(
+    initialTemplate?.templateCode || defaultLatexCode
+  );
   const [isCompiling, setIsCompiling] = useState(false);
   const [pdfUrl, setPdfUrl] = useState("");
   const [autoCompileEnabled, setAutoCompileEnabled] = useState(true);

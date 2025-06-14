@@ -1,10 +1,9 @@
-
 import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Index from "./pages/Index";
@@ -14,19 +13,22 @@ import Signup from "./pages/Signup";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
-import PortfolioBuilder from "./components/PortfolioBuilder";
-
-const queryClient = new QueryClient();
+import TemplateSelection from "./pages/TemplateSelection";
+import PortfolioBuilder from "@/components/PortfolioBuilder";
 
 // Create a wrapper component for the PortfolioBuilder
 const PortfolioBuilderPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   
   const handleBack = () => {
-    navigate('/dashboard');
+    navigate('/portfolio/templates');
   };
 
-  return <PortfolioBuilder onBack={handleBack} />;
+  // Get template data from navigation state
+  const templateData = location.state || {};
+
+  return <PortfolioBuilder onBack={handleBack} initialTemplate={templateData} />;
 };
 
 const App: React.FC = () => (
@@ -43,6 +45,11 @@ const App: React.FC = () => (
             <Route path="/dashboard" element={
               <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/portfolio/templates" element={
+              <ProtectedRoute>
+                <TemplateSelection />
               </ProtectedRoute>
             } />
             <Route path="/portfolio/builder" element={

@@ -62,7 +62,7 @@ const Dashboard = () => {
   };
 
   const handleCreatePortfolio = () => {
-    navigate('/portfolio/builder');
+    navigate('/portfolio/templates');
   };
 
   return (
