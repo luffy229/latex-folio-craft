@@ -1,5 +1,5 @@
 
-import { Loader2, FileText, Download } from "lucide-react";
+import { Loader2, FileText, Download, AlertCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 
@@ -7,9 +7,10 @@ interface PDFPreviewProps {
   pdfUrl: string;
   isCompiling: boolean;
   fullscreen?: boolean;
+  compilationMessage?: string;
 }
 
-const PDFPreview = ({ pdfUrl, isCompiling, fullscreen = false }: PDFPreviewProps) => {
+const PDFPreview = ({ pdfUrl, isCompiling, fullscreen = false, compilationMessage }: PDFPreviewProps) => {
   const height = fullscreen ? "h-full" : "h-full min-h-[400px]";
 
   if (isCompiling) {
@@ -23,6 +24,7 @@ const PDFPreview = ({ pdfUrl, isCompiling, fullscreen = false }: PDFPreviewProps
             <Loader2 className="w-8 h-8 text-cyan-400 mx-auto mb-4" />
           </motion.div>
           <p className="text-white/70 text-sm">Compiling LaTeX...</p>
+          <p className="text-white/50 text-xs mt-2">This may take a few moments</p>
         </div>
       </div>
     );
@@ -50,20 +52,35 @@ const PDFPreview = ({ pdfUrl, isCompiling, fullscreen = false }: PDFPreviewProps
 
   return (
     <div className={`${height} bg-black/30 backdrop-blur-md overflow-hidden`}>
-      {isHtmlPreview ? (
-        <iframe
-          src={pdfUrl}
-          className="w-full h-full border-0"
-          title="LaTeX Preview"
-          style={{ backgroundColor: 'white' }}
-        />
-      ) : (
-        <iframe
-          src={pdfUrl}
-          className="w-full h-full border-0"
-          title="PDF Preview"
-        />
+      {/* Status indicator */}
+      {compilationMessage && (
+        <div className="bg-black/40 backdrop-blur-sm border-b border-white/10 px-4 py-2 flex items-center gap-2">
+          {isHtmlPreview ? (
+            <AlertCircle className="w-4 h-4 text-yellow-400" />
+          ) : (
+            <FileText className="w-4 h-4 text-green-400" />
+          )}
+          <span className="text-xs text-white/70">{compilationMessage}</span>
+        </div>
       )}
+      
+      {/* Preview content */}
+      <div className={`${compilationMessage ? 'h-[calc(100%-41px)]' : 'h-full'}`}>
+        {isHtmlPreview ? (
+          <iframe
+            src={pdfUrl}
+            className="w-full h-full border-0"
+            title="LaTeX Preview"
+            style={{ backgroundColor: 'white' }}
+          />
+        ) : (
+          <iframe
+            src={pdfUrl}
+            className="w-full h-full border-0"
+            title="PDF Preview"
+          />
+        )}
+      </div>
     </div>
   );
 };

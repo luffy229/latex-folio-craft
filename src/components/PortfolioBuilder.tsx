@@ -32,70 +32,63 @@ const defaultLatexCode = `\\documentclass[10pt, letterpaper]{article}
 \\usepackage{fontawesome5} % for using icons
 \\usepackage{amsmath} % for math
 \\usepackage[
-    pdftitle={Pratik Pal's Resume},
-    pdfauthor={Pratik A Pal},
-    pdfcreator={Pratik_A_Pal_resume},
+    pdftitle={Your Name's Resume},
+    pdfauthor={Your Name},
+    pdfcreator={LaTeX_Resume},
     colorlinks=true,
     urlcolor=primaryColor
 ]{hyperref} % for links, metadata and bookmarks
-\\usepackage[pscoord]{eso-pic} % for floating text on the page
-\\usepackage{calc} % for calculating lengths
-\\usepackage{bookmark} % for bookmarks
-\\usepackage{lastpage} % for getting the total number of pages
-\\usepackage{changepage} % for one column entries (adjustwidth environment)
-\\usepackage{paracol} % for two and three column entries
-\\usepackage{ifthen} % for conditional statements
 
 \\begin{document}
 
 \\begin{center}
-    \\textbf{\\LARGE Pratik A Pal} \\\\
+    \\textbf{\\LARGE Your Name} \\\\
     \\vspace{5pt}
-    Goa,India | pratik2002pal@gmail.com | 9064 671 54 0 | Portfolio | Linkedin | Github
+    Your Location | your.email@gmail.com | +1 (555) 123-4567 | Portfolio | LinkedIn | GitHub
 \\end{center}
 
 \\section{Profile}
-Passionate Software Developer with a strong foundation in full stack development, data structures, and scalable web applications. Interested in building performant and intuitive software products that create real world impact.
+A passionate professional with expertise in your field. Write a compelling summary of your background, skills, and career objectives that showcases your unique value proposition.
 
 \\section{Education}
-\\textbf{Padre Conceicao College Of Engineering}, BE in Electronics And Computer \\hfill Sept 2021 - June 2025 \\\\
-\\textbf{Coursework:} Computer Architecture, Comparison of Learning Algorithms, Computational Theory
+\\textbf{Your University}, Bachelor of Science in Your Field \\hfill Month Year - Month Year \\\\
+\\textbf{Relevant Coursework:} Course 1, Course 2, Course 3, Course 4
 
 \\section{Experience}
-\\textbf{Software Developer Engineer Intern}, Creative Capsule - Verna, GOA \\hfill July 2024 - Aug 2024
+\\textbf{Job Title}, Company Name - Location \\hfill Month Year - Month Year
 \\begin{itemize}
-    \\item Engineered a real-time Stock Tracker using Next.js, TypeScript, and Tailwind CSS with dynamic UI components
-    \\item Improved initial load time by up to 40\\% through Next.js server-side rendering (SSR) and static site generation (SSG) compared to client-side react
-    \\item Collaborated with developers to implement React best practices and optimize frontend efficiency
+    \\item Accomplished [specific achievement] that resulted in [quantifiable outcome]
+    \\item Developed and implemented [specific project/initiative] leading to [measurable impact]
+    \\item Collaborated with [team/department] to [accomplish specific goal]
+    \\item Utilized [relevant skills/technologies] to [achieve specific result]
+\\end{itemize}
+
+\\textbf{Previous Job Title}, Previous Company - Location \\hfill Month Year - Month Year
+\\begin{itemize}
+    \\item Led [specific project] that improved [metric] by [percentage/amount]
+    \\item Managed [responsibility] while maintaining [standard/quality]
+    \\item Implemented [solution/process] that reduced [problem] by [amount]
 \\end{itemize}
 
 \\section{Technical Skills}
-\\textbf{Languages:} C++, C, Java, Python, JavaScript, TypeScript, HTML, CSS \\\\
-\\textbf{Frameworks:} React.js, Next.js, Node.js, Express.js, Tailwind CSS \\\\
-\\textbf{Tools:} Git, Clerk, Convex, Node.js, Express.js, PostgreSQL \\\\
-\\textbf{Mobile Development:} React Native, Flutter \\\\
-\\textbf{Databases:} MongoDB, PostgreSQL \\\\
-\\textbf{Core Skills:} Data Structures Algorithms (C++), Algorithm Design, Data Science, Machine Learning
+\\textbf{Programming Languages:} Python, JavaScript, Java, C++, SQL \\\\
+\\textbf{Frameworks \\& Libraries:} React, Node.js, Django, Spring Boot \\\\
+\\textbf{Tools \\& Technologies:} Git, Docker, AWS, MongoDB, PostgreSQL \\\\
+\\textbf{Other Skills:} Project Management, Data Analysis, Machine Learning
 
 \\section{Projects}
-\\textbf{Portfolio Overlap Application} \\hfill Github
+\\textbf{Project Name} \\hfill GitHub | Live Demo
 \\begin{itemize}
-    \\item Engineered a web application to perform comprehensive portfolio overlap analysis for mutual funds and stocks.
-    \\item Reduced manual portfolio comparison time by 70\\% using automated overlap detection and clean UI.
-    \\item Technologies: Next.js, Tailwind CSS, TypeScript, Node.js, PostgreSQL
+    \\item Built [description of project] using [technologies used]
+    \\item Implemented [key features] that [achieved specific outcome]
+    \\item Deployed application serving [number] users with [performance metric]
 \\end{itemize}
 
-\\textbf{Muse Streaming Music Platform} \\hfill Live Demo | Github
+\\textbf{Another Project} \\hfill GitHub | Live Demo
 \\begin{itemize}
-    \\item Developed a full-stack music streaming platform featuring secure user authentication, real-time chat functionality, and an administrative dashboard for content management.
-    \\item Scaled to support 1000+ concurrent users, ensuring seamless music playbook and real-time communication.
-    \\item Technologies: React, Node.js, Express.js, MongoDB, Socket.io, Clerk
-\\end{itemize}
-
-\\textbf{Online Code Editor — Multi-Language Integrated Development Environment (IDE)} \\hfill Live Demo | Github
-\\begin{itemize}
-    \\item Created a VSCode-inspired web-based IDE supporting over 10 programming languages, featuring execution history and workspace management for enhanced code development.
-    \\item Enhanced code execution performance by 30\\% with optimized backend logic using Convex functions.
+    \\item Developed [project description] utilizing [technologies/methodologies]
+    \\item Achieved [specific result] through [approach/technique used]
+    \\item Integrated [systems/APIs] to enhance [functionality/user experience]
 \\end{itemize}
 
 \\end{document}`;
@@ -136,6 +129,7 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
     
     setIsCompiling(true);
     setCompilationMessage("");
+    setPdfUrl(""); // Clear previous PDF
     
     try {
       console.log('Starting LaTeX compilation...');
@@ -252,7 +246,6 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
       
       {/* ... keep existing code (background and space elements) */}
       <div className="fixed inset-0 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-        {/* ... keep existing code (animated gradient overlay) */}
         <motion.div
           className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-purple-500/10 to-pink-500/10"
           animate={{
@@ -270,7 +263,6 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
           }}
         />
         
-        {/* ... keep existing code (floating orbs and particles) */}
         <motion.div
           className="absolute top-20 left-20 w-64 h-64 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 rounded-full blur-3xl"
           animate={{
@@ -315,7 +307,6 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
           }}
         />
 
-        {/* Additional smaller orbs for more depth */}
         <motion.div
           className="absolute top-1/3 right-1/3 w-48 h-48 bg-gradient-to-r from-purple-500/15 to-pink-500/15 rounded-full blur-2xl"
           animate={{
@@ -331,7 +322,6 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
           }}
         />
 
-        {/* Floating particles */}
         {Array.from({ length: 20 }).map((_, i) => (
           <motion.div
             key={i}
@@ -578,6 +568,7 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
                 pdfUrl={pdfUrl}
                 isCompiling={isCompiling}
                 fullscreen
+                compilationMessage={compilationMessage}
               />
             </div>
           </div>
