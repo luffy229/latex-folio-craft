@@ -1,4 +1,3 @@
-
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
@@ -28,7 +27,49 @@ function utf8ToBase64(str: string): string {
   }
 }
 
-// Enhanced LaTeX to HTML converter
+// Function to compile LaTeX using a web-based LaTeX compiler
+async function compileLatexToPDF(latexCode: string) {
+  try {
+    console.log('Attempting to compile LaTeX to PDF using web service...');
+    
+    // Try LaTeX.Online API - a free web-based LaTeX compiler
+    const response = await fetch('https://latex.ytotech.com/builds/sync', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        resources: [{
+          main: true,
+          file: 'main.tex',
+          content: latexCode
+        }],
+        command: 'pdflatex'
+      })
+    });
+
+    if (response.ok) {
+      const pdfBuffer = await response.arrayBuffer();
+      const base64Pdf = btoa(String.fromCharCode(...new Uint8Array(pdfBuffer)));
+      console.log('Successfully compiled LaTeX to PDF');
+      
+      return {
+        success: true,
+        pdfUrl: `data:application/pdf;base64,${base64Pdf}`,
+        message: 'LaTeX successfully compiled to PDF',
+        isHtmlPreview: false
+      };
+    } else {
+      console.log('LaTeX.Online failed, falling back to HTML preview');
+      throw new Error(`LaTeX compilation failed: ${response.status}`);
+    }
+  } catch (error) {
+    console.log('PDF compilation failed:', error);
+    throw error;
+  }
+}
+
+// Enhanced LaTeX to HTML converter (fallback)
 class LaTeXConverter {
   private errors: string[] = [];
 
@@ -366,31 +407,40 @@ serve(async (req) => {
     
     console.log('Processing LaTeX code:', latexCode.substring(0, 100) + '...');
     
-    // Use the comprehensive LaTeX converter
-    const converter = new LaTeXConverter();
-    const result = converter.convert(latexCode);
-    
-    // Use the safe UTF-8 to base64 encoding
-    const base64Html = utf8ToBase64(result.html);
-    
-    const response = {
-      success: true,
-      pdfUrl: `data:text/html;base64,${base64Html}`,
-      message: result.success 
-        ? 'LaTeX successfully converted to HTML preview' 
-        : `LaTeX preview generated with ${result.errors.length} warning(s)`,
-      isHtmlPreview: true,
-      errors: result.errors
-    };
-    
-    console.log('Conversion completed:', { 
-      success: result.success, 
-      errorCount: result.errors.length 
-    });
-    
-    return new Response(JSON.stringify(response), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    // First try to compile to actual PDF
+    try {
+      const pdfResult = await compileLatexToPDF(latexCode);
+      return new Response(JSON.stringify(pdfResult), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    } catch (pdfError) {
+      console.log('PDF compilation failed, falling back to HTML preview:', pdfError);
+      
+      // Fall back to HTML preview
+      const converter = new LaTeXConverter();
+      const result = converter.convert(latexCode);
+      
+      const base64Html = utf8ToBase64(result.html);
+      
+      const response = {
+        success: true,
+        pdfUrl: `data:text/html;base64,${base64Html}`,
+        message: result.success 
+          ? 'LaTeX converted to HTML preview (PDF compilation unavailable)' 
+          : `LaTeX preview generated with ${result.errors.length} warning(s)`,
+        isHtmlPreview: true,
+        errors: result.errors
+      };
+      
+      console.log('Conversion completed:', { 
+        success: result.success, 
+        errorCount: result.errors.length 
+      });
+      
+      return new Response(JSON.stringify(response), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
   } catch (error) {
     console.error('Error in LaTeX compilation:', error);
     
