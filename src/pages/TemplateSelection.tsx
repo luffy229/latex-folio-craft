@@ -13,7 +13,6 @@ import TemplateSelector from "@/components/TemplateSelector";
 
 const TemplateSelection = () => {
   const [selectedTemplate, setSelectedTemplate] = useState("");
-  const [templateCode, setTemplateCode] = useState("");
   const navigate = useNavigate();
 
   const handleTemplateSelect = (templateId: string) => {
@@ -21,15 +20,11 @@ const TemplateSelection = () => {
   };
 
   const handleTemplateLoad = (code: string) => {
-    setTemplateCode(code);
-  };
-
-  const handleContinue = () => {
-    // Navigate to portfolio builder with selected template
+    // Navigate immediately when template code is loaded
     navigate('/portfolio/builder', { 
       state: { 
         templateId: selectedTemplate,
-        templateCode: templateCode 
+        templateCode: code 
       } 
     });
   };
@@ -72,22 +67,6 @@ const TemplateSelection = () => {
             onTemplateSelect={handleTemplateSelect}
             onTemplateLoad={handleTemplateLoad}
           />
-
-          {/* Continue Button */}
-          {selectedTemplate && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="flex justify-center mt-12"
-            >
-              <Button
-                onClick={handleContinue}
-                className="bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white shadow-lg glow-effect px-8 py-3 text-lg"
-              >
-                Continue with Selected Template
-              </Button>
-            </motion.div>
-          )}
         </div>
       </div>
     </div>
