@@ -9,11 +9,9 @@ const corsHeaders = {
 // Helper function to safely encode UTF-8 strings to base64
 function utf8ToBase64(str: string): string {
   try {
-    // Convert string to UTF-8 bytes
     const encoder = new TextEncoder();
     const bytes = encoder.encode(str);
     
-    // Convert bytes to base64
     let binary = '';
     const len = bytes.byteLength;
     for (let i = 0; i < len; i++) {
@@ -21,18 +19,43 @@ function utf8ToBase64(str: string): string {
     }
     return btoa(binary);
   } catch (error) {
-    // Fallback: try to clean the string and encode again
-    const cleanStr = str.replace(/[^\x00-\x7F]/g, ""); // Remove non-ASCII characters
+    const cleanStr = str.replace(/[^\x00-\x7F]/g, "");
     return btoa(cleanStr);
   }
 }
 
-// Function to compile LaTeX using a web-based LaTeX compiler
+// Function to compile LaTeX using multiple web-based LaTeX compilers
 async function compileLatexToPDF(latexCode: string) {
   try {
     console.log('Attempting to compile LaTeX to PDF using web service...');
     
-    // Try LaTeX.Online API - a free web-based LaTeX compiler
+    // Try Overleaf-compatible API first
+    try {
+      const response = await fetch('https://texlive.net/cgi-bin/latexcgi', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `filecontents=${encodeURIComponent(latexCode)}&filename=document.tex&engine=pdflatex`
+      });
+
+      if (response.ok) {
+        const pdfBuffer = await response.arrayBuffer();
+        const base64Pdf = btoa(String.fromCharCode(...new Uint8Array(pdfBuffer)));
+        console.log('Successfully compiled LaTeX to PDF via TeXLive');
+        
+        return {
+          success: true,
+          pdfUrl: `data:application/pdf;base64,${base64Pdf}`,
+          message: 'LaTeX successfully compiled to PDF',
+          isHtmlPreview: false
+        };
+      }
+    } catch (texLiveError) {
+      console.log('TeXLive compilation failed, trying alternative...');
+    }
+
+    // Fallback to LaTeX.Online
     const response = await fetch('https://latex.ytotech.com/builds/sync', {
       method: 'POST',
       headers: {
@@ -51,7 +74,7 @@ async function compileLatexToPDF(latexCode: string) {
     if (response.ok) {
       const pdfBuffer = await response.arrayBuffer();
       const base64Pdf = btoa(String.fromCharCode(...new Uint8Array(pdfBuffer)));
-      console.log('Successfully compiled LaTeX to PDF');
+      console.log('Successfully compiled LaTeX to PDF via LaTeX.Online');
       
       return {
         success: true,
@@ -60,7 +83,7 @@ async function compileLatexToPDF(latexCode: string) {
         isHtmlPreview: false
       };
     } else {
-      console.log('LaTeX.Online failed, falling back to HTML preview');
+      console.log('All PDF compilation services failed, falling back to HTML preview');
       throw new Error(`LaTeX compilation failed: ${response.status}`);
     }
   } catch (error) {
@@ -69,7 +92,7 @@ async function compileLatexToPDF(latexCode: string) {
   }
 }
 
-// Enhanced LaTeX to HTML converter (fallback)
+// Enhanced LaTeX to HTML converter with better template support
 class LaTeXConverter {
   private errors: string[] = [];
 
@@ -97,37 +120,207 @@ class LaTeXConverter {
   private processLatexCode(latexCode: string): string {
     let content = latexCode;
     
-    // Remove document setup
+    // Detect if this is a complex template (like simplehipstercv)
+    const isComplexTemplate = content.includes('simplehipstercv') || 
+                              content.includes('paracol') || 
+                              content.includes('\\bg{') ||
+                              content.includes('\\barrule');
+    
+    if (isComplexTemplate) {
+      return this.processComplexTemplate(content);
+    }
+    
+    // Standard processing for simple templates
     content = this.removeDocumentSetup(content);
-    
-    // Process environments first
     content = this.processEnvironments(content);
-    
-    // Process document structure
     content = this.processStructuralCommands(content);
-    
-    // Process text formatting
     content = this.processTextFormatting(content);
-    
-    // Process mathematical content
     content = this.processMathematical(content);
-    
-    // Process lists
     content = this.processLists(content);
-    
-    // Process tables
     content = this.processTables(content);
-    
-    // Process references and links
     content = this.processReferences(content);
-    
-    // Process spacing and layout
     content = this.processSpacing(content);
-    
-    // Clean up and format paragraphs
     content = this.finalCleanup(content);
     
     return this.wrapInHTML(content);
+  }
+
+  private processComplexTemplate(latexCode: string): string {
+    let content = latexCode;
+    
+    // Remove document setup
+    content = this.removeDocumentSetup(content);
+    
+    // Extract header information
+    const headerMatch = content.match(/\\simpleheader\{[^}]*\}\{([^}]*)\}\{([^}]*)\}\{([^}]*)\}\{[^}]*\}/);
+    const firstName = headerMatch ? headerMatch[1] : 'Your';
+    const lastName = headerMatch ? headerMatch[2] : 'Name';
+    const title = headerMatch ? headerMatch[3] : 'Your Title';
+    
+    // Process two-column layout
+    const colonParts = content.split('\\switchcolumn');
+    const leftColumn = colonParts[0] || '';
+    const rightColumn = colonParts[1] || '';
+    
+    // Process left sidebar
+    const leftContent = this.processLeftSidebar(leftColumn);
+    
+    // Process right main content  
+    const rightContent = this.processRightContent(rightColumn);
+    
+    return this.wrapComplexTemplateInHTML(firstName, lastName, title, leftContent, rightContent);
+  }
+
+  private processLeftSidebar(content: string): string {
+    let html = '';
+    
+    // Extract About Me section
+    const aboutMatch = content.match(/\\bg\{[^}]*\}\{[^}]*\}\{About me\}.*?\n\n\{\\footnotesize\n([^}]*)\}/s);
+    if (aboutMatch) {
+      html += `
+        <div class="mb-6">
+          <div class="bg-green-600 text-white px-3 py-1 mb-2 font-bold">About me</div>
+          <p class="text-sm text-gray-700">${aboutMatch[1].trim()}</p>
+        </div>
+      `;
+    }
+    
+    // Extract Personal information
+    const personalMatch = content.match(/\\bg\{[^}]*\}\{[^}]*\}\{Personal\}.*?\n([^\\]*?)\\bigskip/s);
+    if (personalMatch) {
+      const personalInfo = personalMatch[1].trim().split('\n').filter(line => line.trim());
+      html += `
+        <div class="mb-6">
+          <div class="bg-green-600 text-white px-3 py-1 mb-2 font-bold">Personal</div>
+          ${personalInfo.map(info => `<p class="text-sm text-gray-700">${info.trim()}</p>`).join('')}
+        </div>
+      `;
+    }
+    
+    // Extract Areas of specialization
+    const skillsMatch = content.match(/\\bg\{[^}]*\}\{[^}]*\}\{Areas of specialization\}.*?\n\n([^\\]*?)\\bigskip/s);
+    if (skillsMatch) {
+      html += `
+        <div class="mb-6">
+          <div class="bg-green-600 text-white px-3 py-1 mb-2 font-bold">Areas of specialization</div>
+          <p class="text-sm text-gray-700">${skillsMatch[1].trim()}</p>
+        </div>
+      `;
+    }
+    
+    // Extract Technical Skills
+    const techMatch = content.match(/\\bg\{[^}]*\}\{[^}]*\}\{Technical Skills\}.*?\n\n([^\\]*?)\\vspace/s);
+    if (techMatch) {
+      const techSkills = techMatch[1].trim().replace(/\\texttt\{([^}]*)\}/g, '<code class="bg-gray-100 px-1 rounded">$1</code>');
+      html += `
+        <div class="mb-6">
+          <div class="bg-green-600 text-white px-3 py-1 mb-2 font-bold">Technical Skills</div>
+          <div class="text-sm text-gray-700">${techSkills}</div>
+        </div>
+      `;
+    }
+    
+    // Extract contact information
+    const contactMatches = content.match(/\\infobubble\{[^}]*\}\{[^}]*\}\{[^}]*\}\{([^}]*)\}/g);
+    if (contactMatches) {
+      html += `
+        <div class="mb-6">
+          <div class="bg-green-600 text-white px-3 py-1 mb-2 font-bold">Contact</div>
+          ${contactMatches.map(match => {
+            const contactMatch = match.match(/\{([^}]*)\}$/);
+            return contactMatch ? `<p class="text-sm text-gray-700 mb-1">${contactMatch[1]}</p>` : '';
+          }).join('')}
+        </div>
+      `;
+    }
+    
+    return html;
+  }
+
+  private processRightContent(content: string): string {
+    let html = '';
+    
+    // Process Professional Experience
+    const expMatch = content.match(/\\section\*\{Professional Experience\}(.*?)(?=\\section\*|\\begin\{minipage\}|$)/s);
+    if (expMatch) {
+      html += '<div class="mb-8"><h2 class="text-xl font-bold mb-4 border-b border-gray-300 pb-2">Professional Experience</h2>';
+      
+      const cveventMatches = expMatch[1].match(/\\cvevent\{([^}]*)\}\{([^}]*)\}\{([^}]*)\}\{([^}]*)\}\{([^}]*)\}\{[^}]*\}/g);
+      if (cveventMatches) {
+        cveventMatches.forEach(match => {
+          const parts = match.match(/\\cvevent\{([^}]*)\}\{([^}]*)\}\{([^}]*)\}\{([^}]*)\}\{([^}]*)\}\{[^}]*\}/);
+          if (parts) {
+            html += `
+              <div class="mb-4">
+                <div class="flex justify-between items-start mb-1">
+                  <h3 class="font-bold text-gray-800">${parts[2]}</h3>
+                  <span class="text-sm text-gray-600">${parts[1]}</span>
+                </div>
+                <div class="text-sm text-gray-600 mb-2">${parts[4].replace(/\\color\{[^}]*\}/, '')}</div>
+                <p class="text-sm text-gray-700">${parts[5]}</p>
+              </div>
+            `;
+          }
+        });
+      }
+      html += '</div>';
+    }
+    
+    // Process Education
+    const eduMatch = content.match(/\\section\*\{Education\}(.*?)(?=\\end\{minipage\})/s);
+    if (eduMatch) {
+      html += '<div class="mb-6"><h3 class="text-lg font-bold mb-3">Education</h3>';
+      
+      const degreeMatches = eduMatch[1].match(/\\cvdegree\{([^}]*)\}\{([^}]*)\}\{([^}]*)\}\{([^}]*)\}\{[^}]*\}\{[^}]*\}/g);
+      if (degreeMatches) {
+        degreeMatches.forEach(match => {
+          const parts = match.match(/\\cvdegree\{([^}]*)\}\{([^}]*)\}\{([^}]*)\}\{([^}]*)\}\{[^}]*\}\{[^}]*\}/);
+          if (parts) {
+            html += `
+              <div class="mb-2">
+                <div class="flex justify-between">
+                  <span class="font-semibold">${parts[3]} in ${parts[2]}</span>
+                  <span class="text-sm text-gray-600">${parts[1]}</span>
+                </div>
+                <div class="text-sm text-gray-600">${parts[4].replace(/\\color\{[^}]*\}/, '')}</div>
+              </div>
+            `;
+          }
+        });
+      }
+      html += '</div>';
+    }
+    
+    // Process Programming Skills
+    const progMatch = content.match(/\\section\*\{Programming\}(.*?)(?=\\end\{minipage\})/s);
+    if (progMatch) {
+      html += '<div class="mb-6"><h3 class="text-lg font-bold mb-3">Programming</h3>';
+      
+      const skillMatches = progMatch[1].match(/\\bg\{[^}]*\}\{[^}]*\}\{([^}]*)\}\s*&\s*\\barrule\{([^}]*)\}/g);
+      if (skillMatches) {
+        skillMatches.forEach(match => {
+          const parts = match.match(/\\bg\{[^}]*\}\{[^}]*\}\{([^}]*)\}\s*&\s*\\barrule\{([^}]*)\}/);
+          if (parts) {
+            const skill = parts[1];
+            const level = parseFloat(parts[2]) * 100;
+            html += `
+              <div class="mb-2">
+                <div class="flex justify-between text-sm">
+                  <span>${skill}</span>
+                  <span>${Math.round(level)}%</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                  <div class="bg-purple-600 h-2 rounded-full" style="width: ${level}%"></div>
+                </div>
+              </div>
+            `;
+          }
+        });
+      }
+      html += '</div>';
+    }
+    
+    return html;
   }
 
   private removeDocumentSetup(content: string): string {
@@ -291,6 +484,82 @@ class LaTeXConverter {
     return content;
   }
 
+  private wrapComplexTemplateInHTML(firstName: string, lastName: string, title: string, leftContent: string, rightContent: string): string {
+    return `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>CV Preview</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <style>
+          body { 
+            font-family: 'Raleway', 'Arial', sans-serif; 
+            line-height: 1.4; 
+            max-width: 210mm;
+            min-height: 297mm;
+            margin: 0 auto; 
+            background: white;
+            color: black;
+            font-size: 10pt;
+          }
+          
+          @media screen {
+            body {
+              box-shadow: 0 0 10px rgba(0,0,0,0.1);
+              margin-top: 20px;
+              margin-bottom: 20px;
+            }
+          }
+          
+          .cv-header {
+            background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 0;
+          }
+          
+          .cv-container {
+            display: flex;
+            min-height: calc(100vh - 120px);
+          }
+          
+          .cv-sidebar {
+            background: #f7fafc;
+            width: 35%;
+            padding: 2rem 1.5rem;
+            border-right: 1px solid #e2e8f0;
+          }
+          
+          .cv-main {
+            flex: 1;
+            padding: 2rem;
+            background: white;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="cv-header">
+          <h1 class="text-4xl font-bold mb-2">${firstName} ${lastName}</h1>
+          <p class="text-xl opacity-90">${title}</p>
+        </div>
+        
+        <div class="cv-container">
+          <div class="cv-sidebar">
+            ${leftContent}
+          </div>
+          
+          <div class="cv-main">
+            ${rightContent}
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+  }
+
   private wrapInHTML(content: string): string {
     return `
       <!DOCTYPE html>
@@ -414,9 +683,9 @@ serve(async (req) => {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     } catch (pdfError) {
-      console.log('PDF compilation failed, falling back to HTML preview:', pdfError);
+      console.log('PDF compilation failed, falling back to enhanced HTML preview:', pdfError);
       
-      // Fall back to HTML preview
+      // Fall back to enhanced HTML preview
       const converter = new LaTeXConverter();
       const result = converter.convert(latexCode);
       
@@ -426,13 +695,13 @@ serve(async (req) => {
         success: true,
         pdfUrl: `data:text/html;base64,${base64Html}`,
         message: result.success 
-          ? 'LaTeX converted to HTML preview (PDF compilation unavailable)' 
+          ? 'LaTeX converted to enhanced HTML preview (PDF compilation temporarily unavailable)' 
           : `LaTeX preview generated with ${result.errors.length} warning(s)`,
         isHtmlPreview: true,
         errors: result.errors
       };
       
-      console.log('Conversion completed:', { 
+      console.log('Enhanced conversion completed:', { 
         success: result.success, 
         errorCount: result.errors.length 
       });
