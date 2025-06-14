@@ -1,4 +1,3 @@
-
 export interface Template {
   id: string;
   name: string;
@@ -172,13 +171,13 @@ List your professional interests and hobbies that are relevant to your career.
 \\section*{Publications}
 \\begin{tabular}{>{\\footnotesize\\bfseries}r >{\\footnotesize}p{0.7\\textwidth}}
     2023 & \\emph{Modern Web Development Practices}, Tech Blog. \\\\
-    2022 & ``Building Scalable Applications'', in: \\emph{Developer Monthly} (3/2022).
+    2022 & \\text{Building Scalable Applications}, in: \\emph{Developer Monthly} (3/2022).
 \\end{tabular}
 \\bigskip
 
 \\section*{Speaking}
 \\begin{tabular}{>{\\footnotesize\\bfseries}r >{\\footnotesize}p{0.6\\textwidth}}
-    Mar. 2023 & ``Future of Web Development'', at: \\emph{Tech Conference 2023} in San Francisco.
+    Mar. 2023 & \\text{Future of Web Development}, at: \\emph{Tech Conference 2023} in San Francisco.
 \\end{tabular}
 \\end{minipage}
 
@@ -362,13 +361,13 @@ List your professional interests and hobbies that are relevant to your career.
 \\section*{Publications}
 \\begin{tabular}{>{\\footnotesize\\bfseries}r >{\\footnotesize}p{0.7\\textwidth}}
     2023 & \\emph{Modern Web Development Practices}, Tech Blog. \\\\
-    2022 & ``Building Scalable Applications'', in: \\emph{Developer Monthly} (3/2022).
+    2022 & \\text{Building Scalable Applications}, in: \\emph{Developer Monthly} (3/2022).
 \\end{tabular}
 \\bigskip
 
 \\section*{Speaking}
 \\begin{tabular}{>{\\footnotesize\\bfseries}r >{\\footnotesize}p{0.6\\textwidth}}
-    Mar. 2023 & ``Future of Web Development'', at: \\emph{Tech Conference 2023} in San Francisco.
+    Mar. 2023 & \\text{Future of Web Development}, at: \\emph{Tech Conference 2023} in San Francisco.
 \\end{tabular}
 \\end{minipage}
 
