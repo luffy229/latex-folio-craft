@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -15,6 +16,9 @@ import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import TemplateSelection from "./pages/TemplateSelection";
 import PortfolioBuilder from "@/components/PortfolioBuilder";
+
+// Create QueryClient instance
+const queryClient = new QueryClient();
 
 // Create a wrapper component for the PortfolioBuilder
 const PortfolioBuilderPage = () => {
