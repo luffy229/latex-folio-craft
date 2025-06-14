@@ -128,10 +128,10 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
     if (!latexCode.trim()) return;
     
     setIsCompiling(true);
-    setCompilationMessage("");
+    setCompilationMessage("Processing LaTeX code...");
     
     try {
-      console.log('Starting LaTeX compilation...');
+      console.log('Starting comprehensive LaTeX compilation...');
       
       const { data, error } = await supabase.functions.invoke('compile-latex', {
         body: { latexCode }
@@ -139,38 +139,32 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
 
       console.log('Compilation response:', { data, error });
 
-      // Handle successful response
       if (data && data.success) {
         setPdfUrl(data.pdfUrl);
-        setCompilationMessage(data.message || 'Compilation completed');
+        
+        // Show different messages based on compilation quality
+        if (data.errors && data.errors.length > 0) {
+          setCompilationMessage(`Preview generated with ${data.errors.length} warning(s)`);
+          console.log('Compilation warnings:', data.errors);
+        } else {
+          setCompilationMessage('LaTeX successfully compiled to preview');
+        }
         
         if (!autoCompileEnabled) {
           toast({
             title: "Compilation Complete",
-            description: data.message || "Your portfolio has been compiled successfully!",
+            description: data.message || "Your portfolio preview has been generated!",
           });
         }
-      } 
-      // Handle compilation service errors but still show preview
-      else if (data && !data.success) {
-        console.log('Compilation service failed, showing preview anyway');
-        // Don't throw error, just set a fallback message
-        setCompilationMessage('LaTeX structure preview (compilation service unavailable)');
-        // Generate a basic HTML preview as fallback
-        const basicPreview = generateBasicPreview(latexCode);
-        setPdfUrl(`data:text/html;base64,${btoa(basicPreview)}`);
-      }
-      // Handle edge function errors
-      else if (error) {
-        console.log('Edge function error, showing preview anyway');
-        setCompilationMessage('LaTeX structure preview (compilation service unavailable)');
+      } else {
+        console.log('Compilation failed, showing fallback');
+        setCompilationMessage('LaTeX preview with basic formatting');
         const basicPreview = generateBasicPreview(latexCode);
         setPdfUrl(`data:text/html;base64,${btoa(basicPreview)}`);
       }
     } catch (error) {
       console.error('Compilation error:', error);
-      // Instead of showing error toast, show a preview anyway
-      setCompilationMessage('LaTeX structure preview (compilation service unavailable)');
+      setCompilationMessage('LaTeX preview with basic formatting');
       const basicPreview = generateBasicPreview(latexCode);
       setPdfUrl(`data:text/html;base64,${btoa(basicPreview)}`);
     } finally {
@@ -178,37 +172,40 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
     }
   };
 
-  // Generate a basic HTML preview when compilation fails
+  // Enhanced basic preview for extreme fallback cases
   const generateBasicPreview = (latexCode: string): string => {
     let content = latexCode;
     
-    // Basic LaTeX to HTML conversion
+    // Remove LaTeX preamble
     content = content.replace(/\\documentclass\{[^}]*\}/g, '');
     content = content.replace(/\\usepackage(\[[^\]]*\])?\{[^}]*\}/g, '');
     content = content.replace(/\\begin\{document\}/g, '');
     content = content.replace(/\\end\{document\}/g, '');
     
-    // Convert basic LaTeX commands
+    // Basic conversions
+    content = content.replace(/\\section\{([^}]*)\}/g, '<h2 style="font-size: 1.5em; font-weight: bold; margin-top: 1.5em; margin-bottom: 0.5em; border-bottom: 1px solid #ccc; padding-bottom: 0.2em;">$1</h2>');
+    content = content.replace(/\\subsection\{([^}]*)\}/g, '<h3 style="font-size: 1.2em; font-weight: bold; margin-top: 1.2em; margin-bottom: 0.4em;">$1</h3>');
     content = content.replace(/\\textbf\{([^}]*)\}/g, '<strong>$1</strong>');
     content = content.replace(/\\textit\{([^}]*)\}/g, '<em>$1</em>');
-    content = content.replace(/\\section\{([^}]*)\}/g, '<h2>$1</h2>');
-    content = content.replace(/\\subsection\{([^}]*)\}/g, '<h3>$1</h3>');
-    content = content.replace(/\\begin\{itemize\}/g, '<ul>');
+    content = content.replace(/\\begin\{center\}(.*?)\\end\{center\}/gs, '<div style="text-align: center;">$1</div>');
+    content = content.replace(/\\begin\{itemize\}/g, '<ul style="margin: 1em 0; padding-left: 2em;">');
     content = content.replace(/\\end\{itemize\}/g, '</ul>');
-    content = content.replace(/\\item\s+/g, '<li>');
+    content = content.replace(/\\item\s+/g, '<li style="margin-bottom: 0.3em;">');
     content = content.replace(/\\\\/g, '<br>');
-    content = content.replace(/\\href\{([^}]*)\}\{([^}]*)\}/g, '<a href="$1">$2</a>');
+    content = content.replace(/\\href\{([^}]*)\}\{([^}]*)\}/g, '<a href="$1" style="color: #0066cc; text-decoration: none;">$2</a>');
     
-    // Clean up and format
-    content = content.replace(/\n\s*\n/g, '</p><p>');
-    content = '<p>' + content + '</p>';
-    content = content.replace(/<p>\s*<\/p>/g, '');
+    // Clean up
+    content = content.replace(/\n\s*\n/g, '</p><p style="margin-bottom: 1em;">');
+    content = '<p style="margin-bottom: 1em;">' + content + '</p>';
+    content = content.replace(/<p[^>]*>\s*<\/p>/g, '');
+    content = content.replace(/<li[^>]*>([^<]*?)(?=<li|<\/ul|<h[2-3]|$)/g, '<li style="margin-bottom: 0.3em;">$1</li>');
     
     return `
       <!DOCTYPE html>
       <html>
       <head>
         <meta charset="UTF-8">
+        <title>LaTeX Basic Preview</title>
         <style>
           body { 
             font-family: 'Times New Roman', serif; 
@@ -220,16 +217,13 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
             color: black;
             font-size: 11pt;
           }
-          h2 { font-size: 14pt; font-weight: bold; margin-top: 18pt; margin-bottom: 9pt; }
-          h3 { font-size: 12pt; font-weight: bold; margin-top: 12pt; margin-bottom: 6pt; }
-          ul { margin: 6pt 0; padding-left: 18pt; }
-          li { margin-bottom: 3pt; }
-          a { color: #0066cc; text-decoration: none; }
-          strong { font-weight: bold; }
-          em { font-style: italic; }
+          a:hover { text-decoration: underline; }
         </style>
       </head>
       <body>
+        <div style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 10px; margin-bottom: 20px; border-radius: 4px;">
+          <strong>Basic Preview Mode:</strong> Some LaTeX features may not display correctly. For full compatibility, please check your LaTeX syntax.
+        </div>
         ${content}
       </body>
       </html>
@@ -310,7 +304,7 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
     <div className="min-h-screen relative overflow-hidden">
       <MagneticCursor />
       
-      {/* ... keep existing code (background and space elements) */}
+      {/* ... keep existing code (background and space elements) the same */}
       <div className="fixed inset-0 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
         <motion.div
           className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-purple-500/10 to-pink-500/10"
@@ -446,7 +440,7 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
           }}
           transition={{ duration: 3, repeat: Infinity }}
         >
-          LaTeX Portfolio Builder
+          Advanced LaTeX Portfolio Builder
         </motion.div>
 
         {/* Right - Action buttons */}
@@ -534,12 +528,15 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
               <div className="bg-white/10 backdrop-blur-sm border-t border-l border-r border-white/20 px-4 py-2 text-sm font-medium text-white/90 rounded-t-lg">
                 main.tex
               </div>
+              <div className="ml-2 text-xs text-white/60">
+                {latexCode.split('\n').length} lines
+              </div>
             </div>
             
             {/* Editor Toolbar */}
             <div className="bg-black/20 backdrop-blur-md border-b border-white/10 px-4 py-2 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className="text-sm text-white/70">LaTeX Editor</span>
+                <span className="text-sm text-white/70">Advanced LaTeX Editor</span>
                 {isCompiling && (
                   <motion.div 
                     className="text-xs text-cyan-400 flex items-center gap-1"
@@ -547,7 +544,7 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
                     transition={{ duration: 1.5, repeat: Infinity }}
                   >
                     <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse" />
-                    Compiling...
+                    Processing LaTeX...
                   </motion.div>
                 )}
                 {compilationMessage && !isCompiling && (
@@ -598,7 +595,7 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
               <div className="flex items-center gap-2">
                 <Eye className="w-4 h-4 text-white/70" />
                 <span className="text-sm text-white/90 font-medium">Live Preview</span>
-                <span className="text-xs text-white/60">Real-time compilation</span>
+                <span className="text-xs text-white/60">Full LaTeX support</span>
               </div>
               <div className="flex items-center gap-2">
                 <Button

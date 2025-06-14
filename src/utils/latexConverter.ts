@@ -1,17 +1,14 @@
 
-import "https://deno.land/x/xhr@0.1.0/mod.ts";
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+export interface LaTeXConversionResult {
+  html: string;
+  success: boolean;
+  errors: string[];
+}
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
-
-// Enhanced LaTeX to HTML converter
-class LaTeXConverter {
+export class LaTeXConverter {
   private errors: string[] = [];
 
-  convert(latexCode: string): { html: string; success: boolean; errors: string[] } {
+  convert(latexCode: string): LaTeXConversionResult {
     this.errors = [];
     
     try {
@@ -38,7 +35,7 @@ class LaTeXConverter {
     // Remove document setup
     content = this.removeDocumentSetup(content);
     
-    // Process environments first
+    // Process environments first (before other commands)
     content = this.processEnvironments(content);
     
     // Process document structure
@@ -69,14 +66,21 @@ class LaTeXConverter {
   }
 
   private removeDocumentSetup(content: string): string {
+    // Remove document class
     content = content.replace(/\\documentclass(\[[^\]]*\])?\{[^}]*\}/g, '');
+    
+    // Remove packages
     content = content.replace(/\\usepackage(\[[^\]]*\])?\{[^}]*\}/g, '');
+    
+    // Remove other preamble commands
     content = content.replace(/\\newcommand\{[^}]*\}\{[^}]*\}/g, '');
     content = content.replace(/\\renewcommand\{[^}]*\}\{[^}]*\}/g, '');
     content = content.replace(/\\definecolor\{[^}]*\}\{[^}]*\}\{[^}]*\}/g, '');
     content = content.replace(/\\geometry\{[^}]*\}/g, '');
     content = content.replace(/\\pagestyle\{[^}]*\}/g, '');
     content = content.replace(/\\setlength\{[^}]*\}\{[^}]*\}/g, '');
+    
+    // Remove document environment
     content = content.replace(/\\begin\{document\}/g, '');
     content = content.replace(/\\end\{document\}/g, '');
     
@@ -84,23 +88,34 @@ class LaTeXConverter {
   }
 
   private processEnvironments(content: string): string {
+    // Process center environment
     content = content.replace(/\\begin\{center\}(.*?)\\end\{center\}/gs, '<div class="text-center">$1</div>');
+    
+    // Process flushleft/flushright
     content = content.replace(/\\begin\{flushleft\}(.*?)\\end\{flushleft\}/gs, '<div class="text-left">$1</div>');
     content = content.replace(/\\begin\{flushright\}(.*?)\\end\{flushright\}/gs, '<div class="text-right">$1</div>');
+    
+    // Process quote/quotation
     content = content.replace(/\\begin\{quote\}(.*?)\\end\{quote\}/gs, '<blockquote class="border-l-4 border-gray-300 pl-4 italic">$1</blockquote>');
     content = content.replace(/\\begin\{quotation\}(.*?)\\end\{quotation\}/gs, '<blockquote class="border-l-4 border-gray-300 pl-4 italic">$1</blockquote>');
+    
+    // Process verbatim
     content = content.replace(/\\begin\{verbatim\}(.*?)\\end\{verbatim\}/gs, '<pre class="bg-gray-100 p-3 rounded font-mono text-sm">$1</pre>');
+    
+    // Process minipage
     content = content.replace(/\\begin\{minipage\}(\[[^\]]*\])?\{[^}]*\}(.*?)\\end\{minipage\}/gs, '<div class="inline-block align-top">$2</div>');
     
     return content;
   }
 
   private processStructuralCommands(content: string): string {
+    // Process title, author, date
     content = content.replace(/\\title\{([^}]*)\}/g, '<h1 class="text-3xl font-bold text-center mb-4">$1</h1>');
     content = content.replace(/\\author\{([^}]*)\}/g, '<div class="text-center text-lg mb-2">$1</div>');
     content = content.replace(/\\date\{([^}]*)\}/g, '<div class="text-center text-sm text-gray-600 mb-6">$1</div>');
     content = content.replace(/\\maketitle/g, '');
     
+    // Process sections
     content = content.replace(/\\part\{([^}]*)\}/g, '<h1 class="text-4xl font-bold mt-8 mb-6 border-b-2 border-black pb-2">$1</h1>');
     content = content.replace(/\\chapter\{([^}]*)\}/g, '<h1 class="text-3xl font-bold mt-8 mb-6">$1</h1>');
     content = content.replace(/\\section\{([^}]*)\}/g, '<h2 class="text-2xl font-bold mt-6 mb-4 border-b border-gray-400 pb-1">$1</h2>');
@@ -113,6 +128,7 @@ class LaTeXConverter {
   }
 
   private processTextFormatting(content: string): string {
+    // Font styles
     content = content.replace(/\\textbf\{([^}]*)\}/g, '<strong>$1</strong>');
     content = content.replace(/\\textit\{([^}]*)\}/g, '<em>$1</em>');
     content = content.replace(/\\underline\{([^}]*)\}/g, '<span class="underline">$1</span>');
@@ -120,6 +136,7 @@ class LaTeXConverter {
     content = content.replace(/\\texttt\{([^}]*)\}/g, '<code class="bg-gray-100 px-1 rounded font-mono">$1</code>');
     content = content.replace(/\\textsc\{([^}]*)\}/g, '<span class="uppercase tracking-wide text-sm">$1</span>');
     
+    // Font sizes
     content = content.replace(/\\tiny\s+([^\\{]+)/g, '<span class="text-xs">$1</span>');
     content = content.replace(/\\scriptsize\s+([^\\{]+)/g, '<span class="text-xs">$1</span>');
     content = content.replace(/\\footnotesize\s+([^\\{]+)/g, '<span class="text-sm">$1</span>');
@@ -135,11 +152,15 @@ class LaTeXConverter {
   }
 
   private processMathematical(content: string): string {
+    // Inline math
     content = content.replace(/\$([^$]+)\$/g, '<span class="font-mono bg-blue-50 px-1 rounded">$1</span>');
+    
+    // Display math
     content = content.replace(/\$\$([^$]+)\$\$/g, '<div class="text-center font-mono bg-blue-50 p-3 rounded my-4">$1</div>');
     content = content.replace(/\\\[(.*?)\\\]/gs, '<div class="text-center font-mono bg-blue-50 p-3 rounded my-4">$1</div>');
     content = content.replace(/\\\((.*?)\\\)/gs, '<span class="font-mono bg-blue-50 px-1 rounded">$1</span>');
     
+    // Math environments
     content = content.replace(/\\begin\{equation\}(.*?)\\end\{equation\}/gs, '<div class="text-center font-mono bg-blue-50 p-3 rounded my-4">$1</div>');
     content = content.replace(/\\begin\{align\}(.*?)\\end\{align\}/gs, '<div class="text-center font-mono bg-blue-50 p-3 rounded my-4">$1</div>');
     content = content.replace(/\\begin\{eqnarray\}(.*?)\\end\{eqnarray\}/gs, '<div class="text-center font-mono bg-blue-50 p-3 rounded my-4">$1</div>');
@@ -148,13 +169,19 @@ class LaTeXConverter {
   }
 
   private processLists(content: string): string {
+    // Itemize (unordered lists)
     content = content.replace(/\\begin\{itemize\}/g, '<ul class="list-disc ml-6 my-3">');
     content = content.replace(/\\end\{itemize\}/g, '</ul>');
+    
+    // Enumerate (ordered lists)
     content = content.replace(/\\begin\{enumerate\}/g, '<ol class="list-decimal ml-6 my-3">');
     content = content.replace(/\\end\{enumerate\}/g, '</ol>');
+    
+    // Description lists
     content = content.replace(/\\begin\{description\}/g, '<dl class="my-3">');
     content = content.replace(/\\end\{description\}/g, '</dl>');
     
+    // List items
     content = content.replace(/\\item\s+/g, '<li class="mb-1">');
     content = content.replace(/\\item\[([^\]]*)\]\s*/g, '<dt class="font-semibold">$1</dt><dd class="ml-4">');
     
@@ -162,6 +189,7 @@ class LaTeXConverter {
   }
 
   private processTables(content: string): string {
+    // Basic tabular environment
     content = content.replace(/\\begin\{tabular\}\{[^}]*\}(.*?)\\end\{tabular\}/gs, (match, tableContent) => {
       let rows = tableContent.split('\\\\');
       let html = '<table class="border-collapse border border-gray-300 my-4">';
@@ -185,8 +213,11 @@ class LaTeXConverter {
   }
 
   private processReferences(content: string): string {
+    // Hyperlinks
     content = content.replace(/\\href\{([^}]*)\}\{([^}]*)\}/g, '<a href="$1" class="text-blue-600 underline hover:text-blue-800">$2</a>');
     content = content.replace(/\\url\{([^}]*)\}/g, '<a href="$1" class="text-blue-600 underline hover:text-blue-800 font-mono">$1</a>');
+    
+    // Citations and references (simplified)
     content = content.replace(/\\cite\{([^}]*)\}/g, '[<span class="text-blue-600">$1</span>]');
     content = content.replace(/\\ref\{([^}]*)\}/g, '<span class="text-blue-600">ref:$1</span>');
     content = content.replace(/\\label\{([^}]*)\}/g, '');
@@ -195,13 +226,20 @@ class LaTeXConverter {
   }
 
   private processSpacing(content: string): string {
+    // Line breaks
     content = content.replace(/\\\\\s*/g, '<br>');
     content = content.replace(/\\newline/g, '<br>');
+    
+    // Page breaks (convert to spacing)
     content = content.replace(/\\newpage/g, '<div class="mt-12"></div>');
     content = content.replace(/\\clearpage/g, '<div class="mt-12"></div>');
+    
+    // Horizontal spacing
     content = content.replace(/\\hspace\{[^}]*\}/g, '<span class="inline-block w-4"></span>');
     content = content.replace(/\\quad/g, '<span class="inline-block w-4"></span>');
     content = content.replace(/\\qquad/g, '<span class="inline-block w-8"></span>');
+    
+    // Vertical spacing
     content = content.replace(/\\vspace\{[^}]*\}/g, '<div class="my-2"></div>');
     content = content.replace(/\\bigskip/g, '<div class="my-4"></div>');
     content = content.replace(/\\medskip/g, '<div class="my-2"></div>');
@@ -211,18 +249,22 @@ class LaTeXConverter {
   }
 
   private finalCleanup(content: string): string {
+    // Fix unclosed list items
     content = content.replace(/<li class="[^"]*">([^<]*?)(?=<li|<\/[ou]l|<h[1-6]|<div|$)/g, '<li class="mb-1">$1</li>');
     content = content.replace(/<dd class="[^"]*">([^<]*?)(?=<dt|<\/dl|<h[1-6]|<div|$)/g, '<dd class="ml-4">$1</dd>');
     
+    // Handle paragraphs
     content = content.replace(/\n\s*\n/g, '</p><p class="mb-3">');
     content = '<p class="mb-3">' + content + '</p>';
     
+    // Clean up empty paragraphs and fix spacing
     content = content.replace(/<p class="mb-3">\s*<\/p>/g, '');
     content = content.replace(/<p class="mb-3">\s*(<h[1-6])/g, '$1');
     content = content.replace(/(<\/h[1-6]>)\s*<\/p>/g, '$1');
     content = content.replace(/(<div[^>]*>)\s*<\/p>/g, '$1');
     content = content.replace(/<p class="mb-3">\s*(<div)/g, '$1');
     
+    // Remove extra LaTeX commands that weren't processed
     content = content.replace(/\\[a-zA-Z]+\{[^}]*\}/g, '');
     content = content.replace(/\\[a-zA-Z]+/g, '');
     
@@ -333,64 +375,3 @@ class LaTeXConverter {
     `;
   }
 }
-
-serve(async (req) => {
-  // Handle CORS preflight requests
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
-  }
-
-  try {
-    const { latexCode } = await req.json();
-    
-    console.log('Processing LaTeX code:', latexCode.substring(0, 100) + '...');
-    
-    // Use the comprehensive LaTeX converter
-    const converter = new LaTeXConverter();
-    const result = converter.convert(latexCode);
-    
-    const response = {
-      success: true,
-      pdfUrl: `data:text/html;base64,${btoa(result.html)}`,
-      message: result.success 
-        ? 'LaTeX successfully converted to HTML preview' 
-        : `LaTeX preview generated with ${result.errors.length} warning(s)`,
-      isHtmlPreview: true,
-      errors: result.errors
-    };
-    
-    console.log('Conversion completed:', { 
-      success: result.success, 
-      errorCount: result.errors.length 
-    });
-    
-    return new Response(JSON.stringify(response), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
-  } catch (error) {
-    console.error('Error in LaTeX compilation:', error);
-    
-    // Return a basic error preview
-    const basicPreview = `
-      <!DOCTYPE html>
-      <html>
-      <head><meta charset="UTF-8"><title>LaTeX Preview</title></head>
-      <body style="font-family: Times, serif; padding: 20px;">
-        <h2>LaTeX Preview Error</h2>
-        <p>Unable to process LaTeX code. Please check your syntax and try again.</p>
-        <p><strong>Error:</strong> ${error.message}</p>
-      </body>
-      </html>
-    `;
-    
-    return new Response(JSON.stringify({ 
-      success: true, 
-      pdfUrl: `data:text/html;base64,${btoa(basicPreview)}`,
-      message: 'Error preview generated',
-      isHtmlPreview: true,
-      errors: [error.message]
-    }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
-  }
-});
