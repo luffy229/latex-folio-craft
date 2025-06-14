@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -108,6 +107,7 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
   const [pdfUrl, setPdfUrl] = useState("");
   const [autoCompileEnabled, setAutoCompileEnabled] = useState(true);
   const [outline, setOutline] = useState<OutlineItem[]>([]);
+  const [compilationMessage, setCompilationMessage] = useState("");
   const { toast } = useToast();
   const editorRef = useRef<LaTeXEditorRef>(null);
 
@@ -127,7 +127,7 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
     if (!autoCompileEnabled || !latexCode.trim()) return;
     const timer = setTimeout(() => {
       handleCompile();
-    }, 1500); // Increased delay for auto-compile
+    }, 2000); // Increased delay for auto-compile
     return () => clearTimeout(timer);
   }, [latexCode, autoCompileEnabled]);
 
@@ -135,11 +135,16 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
     if (!latexCode.trim()) return;
     
     setIsCompiling(true);
+    setCompilationMessage("");
     
     try {
+      console.log('Starting LaTeX compilation...');
+      
       const { data, error } = await supabase.functions.invoke('compile-latex', {
         body: { latexCode }
       });
+
+      console.log('Compilation response:', { data, error });
 
       if (error) {
         throw error;
@@ -147,10 +152,12 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
 
       if (data.success) {
         setPdfUrl(data.pdfUrl);
+        setCompilationMessage(data.message || 'Compilation completed');
+        
         if (!autoCompileEnabled) {
           toast({
             title: "Compilation Complete",
-            description: "Your portfolio has been compiled successfully!",
+            description: data.message || "Your portfolio has been compiled successfully!",
           });
         }
       } else {
@@ -158,6 +165,7 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
       }
     } catch (error) {
       console.error('Compilation error:', error);
+      setCompilationMessage('Compilation failed - please check your LaTeX syntax');
       toast({
         title: "Compilation Error",
         description: error instanceof Error ? error.message : "Failed to compile LaTeX",
@@ -215,6 +223,23 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
       });
       return;
     }
+
+    // For HTML previews, create a downloadable PDF version
+    if (pdfUrl.startsWith('data:text/html')) {
+      toast({
+        title: "Preview Mode",
+        description: "Currently showing structure preview. For PDF download, LaTeX compilation service needed.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // For actual PDF data URLs
+    const a = document.createElement("a");
+    a.href = pdfUrl;
+    a.download = "portfolio.pdf";
+    a.click();
+    
     toast({
       title: "Download Started",
       description: "PDF file downloaded successfully!",
@@ -225,9 +250,9 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
     <div className="min-h-screen relative overflow-hidden">
       <MagneticCursor />
       
-      {/* Enhanced Space Background with more dynamic elements */}
+      {/* ... keep existing code (background and space elements) */}
       <div className="fixed inset-0 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-        {/* Animated gradient overlay with more complexity */}
+        {/* ... keep existing code (animated gradient overlay) */}
         <motion.div
           className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-purple-500/10 to-pink-500/10"
           animate={{
@@ -245,7 +270,7 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
           }}
         />
         
-        {/* Multiple floating orbs with different sizes and animations */}
+        {/* ... keep existing code (floating orbs and particles) */}
         <motion.div
           className="absolute top-20 left-20 w-64 h-64 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 rounded-full blur-3xl"
           animate={{
@@ -330,7 +355,7 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
         ))}
       </div>
 
-      {/* Top Header Bar with enhanced animations */}
+      {/* Top Header Bar */}
       <motion.div 
         className="relative z-10 bg-black/20 backdrop-blur-md border-b border-white/10 h-14 flex items-center justify-between px-4"
         initial={{ y: -20, opacity: 0 }}
@@ -353,7 +378,7 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
           </Button>
         </motion.div>
 
-        {/* Center - Title with glow effect */}
+        {/* Center - Title */}
         <motion.div 
           className="text-white/90 font-medium"
           animate={{ 
@@ -365,10 +390,10 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
           }}
           transition={{ duration: 3, repeat: Infinity }}
         >
-          RenderCV EngineeringResumes Theme
+          LaTeX Portfolio Builder
         </motion.div>
 
-        {/* Right - Action buttons with stagger animation */}
+        {/* Right - Action buttons */}
         <motion.div 
           className="flex items-center gap-2"
           initial={{ x: 20, opacity: 0 }}
@@ -423,9 +448,9 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
         </motion.div>
       </motion.div>
 
-      {/* Main Content - Three panels with enhanced animations */}
+      {/* Main Content - Three panels */}
       <div className="relative z-10 flex h-[calc(100vh-56px)]">
-        {/* Left Sidebar with enhanced animations */}
+        {/* Left Sidebar - File Outline */}
         <motion.div 
           className="w-60 bg-black/20 backdrop-blur-md border-r border-white/10"
           initial={{ x: -240, opacity: 0 }}
@@ -440,7 +465,7 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
           />
         </motion.div>
 
-        {/* Center - LaTeX Editor with enhanced animations */}
+        {/* Center - LaTeX Editor */}
         <motion.div 
           className="flex-1 border-r border-white/10"
           initial={{ y: 20, opacity: 0 }}
@@ -449,29 +474,16 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
         >
           <div className="h-full bg-black/20 backdrop-blur-md">
             {/* Editor Tabs */}
-            <motion.div 
-              className="bg-black/30 backdrop-blur-md border-b border-white/10 px-4 py-0 flex items-center"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1.2 }}
-            >
-              <motion.div 
-                className="bg-white/10 backdrop-blur-sm border-t border-l border-r border-white/20 px-4 py-2 text-sm font-medium text-white/90 rounded-t-lg"
-                whileHover={{ backgroundColor: "rgba(255,255,255,0.15)" }}
-              >
+            <div className="bg-black/30 backdrop-blur-md border-b border-white/10 px-4 py-0 flex items-center">
+              <div className="bg-white/10 backdrop-blur-sm border-t border-l border-r border-white/20 px-4 py-2 text-sm font-medium text-white/90 rounded-t-lg">
                 main.tex
-              </motion.div>
-            </motion.div>
+              </div>
+            </div>
             
             {/* Editor Toolbar */}
-            <motion.div 
-              className="bg-black/20 backdrop-blur-md border-b border-white/10 px-4 py-2 flex items-center justify-between"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1.4 }}
-            >
+            <div className="bg-black/20 backdrop-blur-md border-b border-white/10 px-4 py-2 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className="text-sm text-white/70">Code Editor</span>
+                <span className="text-sm text-white/70">LaTeX Editor</span>
                 {isCompiling && (
                   <motion.div 
                     className="text-xs text-cyan-400 flex items-center gap-1"
@@ -482,47 +494,42 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
                     Compiling...
                   </motion.div>
                 )}
+                {compilationMessage && !isCompiling && (
+                  <span className="text-xs text-green-400">{compilationMessage}</span>
+                )}
               </div>
               <div className="flex items-center gap-2">
-                {[
-                  { icon: Copy, onClick: handleCopy },
-                  { icon: RotateCcw, onClick: handleReset },
-                ].map((button, index) => (
-                  <motion.div
-                    key={index}
-                    whileHover={{ scale: 1.1, rotate: 5 }}
-                    whileTap={{ scale: 0.9 }}
-                  >
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={button.onClick}
-                      className="text-white/70 hover:text-white hover:bg-white/10 p-2 h-8 w-8 backdrop-blur-sm transition-all duration-300"
-                    >
-                      <button.icon className="w-4 h-4" />
-                    </Button>
-                  </motion.div>
-                ))}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleCopy}
+                  className="text-white/70 hover:text-white hover:bg-white/10 p-2 h-8 w-8 backdrop-blur-sm transition-all duration-300"
+                >
+                  <Copy className="w-4 h-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleReset}
+                  className="text-white/70 hover:text-white hover:bg-white/10 p-2 h-8 w-8 backdrop-blur-sm transition-all duration-300"
+                >
+                  <RotateCcw className="w-4 h-4" />
+                </Button>
               </div>
-            </motion.div>
+            </div>
 
             {/* Editor Content */}
-            <motion.div 
-              className="h-[calc(100%-81px)]"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1.6 }}
-            >
+            <div className="h-[calc(100%-81px)]">
               <LaTeXEditor
                 ref={editorRef}
                 code={latexCode}
                 onChange={handleLatexChange}
               />
-            </motion.div>
+            </div>
           </div>
         </motion.div>
 
-        {/* Right - PDF Preview with enhanced animations */}
+        {/* Right - PDF Preview */}
         <motion.div 
           className="flex-1"
           initial={{ x: 20, opacity: 0 }}
@@ -531,76 +538,48 @@ const PortfolioBuilder = ({ onBack }: PortfolioBuilderProps) => {
         >
           <div className="h-full bg-black/20 backdrop-blur-md">
             {/* Preview Header */}
-            <motion.div 
-              className="bg-black/20 backdrop-blur-md border-b border-white/10 px-4 py-2 flex items-center justify-between"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1.8 }}
-            >
+            <div className="bg-black/20 backdrop-blur-md border-b border-white/10 px-4 py-2 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <motion.div
-                  animate={{ scale: [1, 1.1, 1] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                >
-                  <Eye className="w-4 h-4 text-white/70" />
-                </motion.div>
-                <span className="text-sm text-white/90 font-medium">Portfolio Preview</span>
-                <span className="text-xs text-white/60">Real-time LaTeX compilation</span>
+                <Eye className="w-4 h-4 text-white/70" />
+                <span className="text-sm text-white/90 font-medium">Live Preview</span>
+                <span className="text-xs text-white/60">Real-time compilation</span>
               </div>
-              <motion.div 
-                className="flex items-center gap-2"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 2 }}
-              >
-                {[
-                  { text: ".tex", onClick: handleDownloadTeX },
-                  { text: "PDF", onClick: handleDownloadPDF, variant: "primary" },
-                  { icon: Download, onClick: handleDownloadPDF },
-                ].map((button, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ delay: 2.1 + index * 0.1 }}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <Button
-                      variant={button.variant === "primary" ? "default" : button.icon ? "ghost" : "outline"}
-                      size="sm"
-                      onClick={button.onClick}
-                      className={`
-                        ${button.variant === "primary" 
-                          ? "bg-blue-600/80 hover:bg-blue-600 text-white glow-effect" 
-                          : button.icon 
-                            ? "text-white/70 hover:text-white hover:bg-white/10 p-1.5 h-7 w-7"
-                            : "border-white/20 text-white/90 hover:bg-white/10 px-3 py-1.5 h-7"
-                        } 
-                        text-xs backdrop-blur-sm transition-all duration-300
-                      `}
-                    >
-                      {button.icon && <button.icon className="w-4 h-4" />}
-                      {button.text}
-                    </Button>
-                  </motion.div>
-                ))}
-              </motion.div>
-            </motion.div>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleDownloadTeX}
+                  className="border-white/20 text-white/90 hover:bg-white/10 px-3 py-1.5 h-7 text-xs backdrop-blur-sm transition-all duration-300"
+                >
+                  .tex
+                </Button>
+                <Button
+                  variant="default"
+                  size="sm"
+                  onClick={handleDownloadPDF}
+                  className="bg-blue-600/80 hover:bg-blue-600 text-white px-3 py-1.5 h-7 text-xs backdrop-blur-sm transition-all duration-300"
+                >
+                  PDF
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleDownloadPDF}
+                  className="text-white/70 hover:text-white hover:bg-white/10 p-1.5 h-7 w-7 backdrop-blur-sm transition-all duration-300"
+                >
+                  <Download className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
             
             {/* Preview Content */}
-            <motion.div 
-              className="h-[calc(100%-41px)]"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 2.2 }}
-            >
+            <div className="h-[calc(100%-41px)]">
               <PDFPreview
                 pdfUrl={pdfUrl}
                 isCompiling={isCompiling}
                 fullscreen
               />
-            </motion.div>
+            </div>
           </div>
         </motion.div>
       </div>
