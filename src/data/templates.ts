@@ -10,6 +10,196 @@ export interface Template {
 
 export const templates: Template[] = [
   {
+    id: 'custom-hipster-cv',
+    name: 'Custom Hipster CV',
+    description: 'A modern two-column resume with sidebar layout, perfect for creative professionals - based on your custom template',
+    preview: '/api/placeholder/400/300',
+    category: 'Creative',
+    code: `% a mashup of hipstercv, friggeri and twenty cv
+% https://www.latextemplates.com/template/twenty-seconds-resumecv
+% https://www.latextemplates.com/template/friggeri-resume-cv
+
+\\documentclass[lighthipster]{simplehipstercv}
+% available options are: darkhipster, lighthipster, pastel, allblack, grey, verylight, withoutsidebar
+% withoutsidebar
+\\usepackage[utf8]{inputenc}
+\\usepackage[default]{raleway}
+\\usepackage[margin=1cm, a4paper]{geometry}
+
+%------------------------------------------------------------------ Variablen
+
+\\newlength{\\rightcolwidth}
+\\newlength{\\leftcolwidth}
+\\setlength{\\leftcolwidth}{0.23\\textwidth}
+\\setlength{\\rightcolwidth}{0.75\\textwidth}
+
+%------------------------------------------------------------------
+\\title{Your Resume Title}
+\\author{Your Name}
+\\date{\\today}
+
+\\pagestyle{empty}
+\\begin{document}
+
+\\thispagestyle{empty}
+%-------------------------------------------------------------
+
+\\section*{Start}
+
+\\simpleheader{headercolour}{Your}{Name}{Your Title}{white}
+
+%------------------------------------------------
+
+% this has to be here so the paracols starts..
+\\subsection*{}
+\\vspace{4em}
+
+\\setlength{\\columnsep}{1.5cm}
+\\columnratio{0.23}[0.75]
+\\begin{paracol}{2}
+\\hbadness5000
+
+\\paracolbackgroundoptions
+
+\\footnotesize
+{\\setasidefontcolour
+\\flushright
+\\begin{center}
+    % \\roundpic{profile.jpg} % Uncomment and add your photo
+\\end{center}
+
+\\bg{cvgreen}{white}{About me}\\\\[0.5em]
+
+{\\footnotesize
+Write a brief description about yourself, your professional background, and what makes you unique in your field.}
+\\bigskip
+
+\\bg{cvgreen}{white}{Personal} \\\\[0.5em]
+Your Full Name
+
+Nationality: Your Nationality
+
+Date of Birth: Your DOB
+
+\\bigskip
+
+\\bg{cvgreen}{white}{Areas of specialization} \\\\[0.5em]
+
+Skill 1 ~•~ Skill 2 ~•~ Skill 3 ~•~ Skill 4
+
+\\bigskip
+
+\\bg{cvgreen}{white}{Interests}\\\\[0.5em]
+
+List your professional interests and hobbies that are relevant to your career.
+\\bigskip
+
+\\bg{cvgreen}{white}{Technical Skills}\\\\[0.5em]
+
+\\texttt{Python} ~/~ \\texttt{JavaScript} ~/~ \\texttt{React}
+
+\\texttt{Node.js} ~/~ \\texttt{SQL} ~/~ \\texttt{Git}
+
+\\texttt{AWS} ~/~ \\texttt{Docker} ~/~ \\texttt{Linux}
+
+\\vspace{4em}
+
+\\infobubble{\\faAt}{cvgreen}{white}{your.email@example.com}
+\\infobubble{\\faLinkedin}{cvgreen}{white}{linkedin.com/in/yourprofile}
+\\infobubble{\\faGithub}{cvgreen}{white}{github.com/yourusername}
+\\infobubble{\\faPhone}{cvgreen}{white}{+1 (555) 123-4567}
+
+\\phantom{turn the page}
+
+\\phantom{turn the page}
+}
+%-----------------------------------------------------------
+\\switchcolumn
+
+\\small
+\\section*{Professional Experience}
+
+\\begin{tabular}{r| p{0.5\\textwidth} c}
+    \\cvevent{2021--Present}{Senior Software Developer}{Lead}{Tech Company \\color{cvred}}{Led development of key features, mentored junior developers, and improved system performance by 40\\%.}{} \\\\
+    \\cvevent{2019--2021}{Software Developer}{Full-time}{StartUp Inc \\color{cvred}}{Developed web applications using modern technologies and collaborated with cross-functional teams.}{}
+\\end{tabular}
+\\vspace{3em}
+
+\\begin{minipage}[t]{0.35\\textwidth}
+\\section*{Education}
+\\begin{tabular}{r p{0.6\\textwidth} c}
+    \\cvdegree{2019}{Computer Science}{B.S.}{University Name \\color{headerblue}}{}{} \\\\
+    \\cvdegree{2023}{Software Engineering}{M.S.}{University Name \\color{headerblue}}{}{}
+\\end{tabular}
+\\end{minipage}\\hfill
+\\begin{minipage}[t]{0.3\\textwidth}
+\\section*{Programming}
+\\begin{tabular}{r @{\\hspace{0.5em}}l}
+     \\bg{skilllabelcolour}{iconcolour}{JavaScript} &  \\barrule{0.9}{0.5em}{cvpurple}\\\\
+     \\bg{skilllabelcolour}{iconcolour}{Python} & \\barrule{0.8}{0.5em}{cvgreen} \\\\
+     \\bg{skilllabelcolour}{iconcolour}{React} & \\barrule{0.85}{0.5em}{cvpurple} \\\\
+     \\bg{skilllabelcolour}{iconcolour}{Node.js} & \\barrule{0.7}{0.5em}{cvpurple} \\\\
+     \\bg{skilllabelcolour}{iconcolour}{SQL} & \\barrule{0.75}{0.5em}{cvpurple} \\\\
+\\end{tabular}
+\\end{minipage}
+
+\\section*{Projects}
+\\begin{tabular}{r| p{0.5\\textwidth} c}
+    \\cvevent{2023}{E-commerce Platform}{Personal Project}{GitHub \\color{cvred}}{Built a full-stack e-commerce application with React, Node.js, and MongoDB.}{} \\\\
+    \\cvevent{2022}{Task Management App}{Team Project}{Portfolio \\color{cvred}}{Developed a collaborative task management tool with real-time updates.}{} \\\\
+\\end{tabular}
+\\vspace{3em}
+
+\\begin{minipage}[t]{0.3\\textwidth}
+\\section*{Certifications}
+\\begin{tabular}{>{\\footnotesize\\bfseries}r >{\\footnotesize}p{0.55\\textwidth}}
+    2023 & AWS Certified Developer \\\\
+    2022 & React Professional Certification \\\\
+    2021 & Agile Project Management
+\\end{tabular}
+\\bigskip
+
+\\section*{Languages}
+\\begin{tabular}{l | ll}
+\\textbf{English} & C2 & {\\phantom{x}\\footnotesize native} \\\\
+\\textbf{Spanish} & B2 & \\pictofraction{\\faCircle}{cvgreen}{3}{black!30}{1}{\\tiny} \\\\
+\\textbf{French} & A2 & \\pictofraction{\\faCircle}{cvgreen}{1}{black!30}{3}{\\tiny} \\\\
+\\end{tabular}
+\\bigskip
+
+\\end{minipage}\\hfill
+\\begin{minipage}[t]{0.3\\textwidth}
+\\section*{Publications}
+\\begin{tabular}{>{\\footnotesize\\bfseries}r >{\\footnotesize}p{0.7\\textwidth}}
+    2023 & \\emph{Modern Web Development Practices}, Tech Blog. \\\\
+    2022 & ``Building Scalable Applications'', in: \\emph{Developer Monthly} (3/2022).
+\\end{tabular}
+\\bigskip
+
+\\section*{Speaking}
+\\begin{tabular}{>{\\footnotesize\\bfseries}r >{\\footnotesize}p{0.6\\textwidth}}
+    Mar. 2023 & ``Future of Web Development'', at: \\emph{Tech Conference 2023} in San Francisco.
+\\end{tabular}
+\\end{minipage}
+
+\\vfill{} % Whitespace before final footer
+
+%----------------------------------------------------------------------------------------
+%	FINAL FOOTER
+%----------------------------------------------------------------------------------------
+\\setlength{\\parindent}{0pt}
+\\begin{minipage}[t]{\\rightcolwidth}
+\\begin{center}\\fontfamily{\\sfdefault}\\selectfont \\color{black!70}
+{\\small Your Name \\icon{\\faEnvelopeO}{cvgreen}{} your.email@example.com \\icon{\\faMapMarker}{cvgreen}{} Your City, Country \\icon{\\faPhone}{cvgreen}{} +1 (555) 123-4567 \\newline\\icon{\\faAt}{cvgreen}{} \\protect\\url{yourwebsite.com}
+}
+\\end{center}
+\\end{minipage}
+
+\\end{paracol}
+
+\\end{document}`
+  },
+  {
     id: 'hipster-cv',
     name: 'Hipster CV',
     description: 'A modern two-column resume with sidebar layout, perfect for creative professionals',
@@ -306,8 +496,8 @@ Advisor: Dr. Advisor Name
 \\section{Publications}
 \\subsection*{Peer-Reviewed Articles}
 \\begin{enumerate}[leftmargin=20pt]
-\\item Author, A., \\textbf{Your Name}, \& Author, C. (Year). Title of article. \\textit{Journal Name}, Volume(Issue), pages.
-\\item \\textbf{Your Name} \& Author, B. (Year). Another article title. \\textit{Journal Name}, Volume(Issue), pages.
+\\item Author, A., \\textbf{Your Name}, \\& Author, C. (Year). Title of article. \\textit{Journal Name}, Volume(Issue), pages.
+\\item \\textbf{Your Name} \\& Author, B. (Year). Another article title. \\textit{Journal Name}, Volume(Issue), pages.
 \\end{enumerate}
 
 \\subsection*{Book Chapters}
